@@ -1,147 +1,146 @@
-import pygame
-import sys
+import pygame, sys
+from PlayerClass import Player
 
 clock = pygame.time.Clock()
-
-from pygame.locals import *
+pygame.display.set_caption('Colour!')
 
 pygame.init()
 
-pygame.display.set_caption('colour!')
-
-WINDOW_SIZE = (600, 400)
-
+WINDOW_SIZE = (1280, 640)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
+display = pygame.Surface((640, 320))
 
-display = pygame.Surface((300, 200))
+# player init
+player = Player()
 
-player_image = pygame.image.load('enemy.png').convert_alpha()
-# player_image.set_colorkey(255,255,255)
+# load tile images here
 
-crate_image = pygame.image.load('crate.png').convert_alpha()
-TILE_SIZE = crate_image.get_width()
-floor_image = pygame.image.load('floor.png').convert_alpha()
-
-game_map = [['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', '0', '0', '0', '0', '0', '2', '2', '2', '2', '2', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-            ['2', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '2', '2'],
-            ['1', '1', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '1', '1'],
-            ['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'],
-            ['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'],
-            ['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'],
-            ['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'],
-            ['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1']]
+floor_tile = pygame.image.load("floor.png").convert_alpha()
+TILE_SIZE = 16
 
 
-def collision_test(rect, tiles):
-    hit_list = []
-    for tile in tiles:
-        if rect.colliderect(tile):
-            hit_list.append(tile)
-    return hit_list
+class Level:
+    # pass map_file as a string that is the file path of the map
+    def __init__(self, map):
+        self.map_file = map
+        self.map_text = []
+        self.map_tiles = []
+        self.map_rects = []
+        self.map_colliders = []
+
+    def load_map(self):
+        f = open(self.map_file, "r")
+        self.map_text = f.read()
+        f.close()
+        self.map_text = self.map_text.split('\n')
+        for line in self.map_text:
+            self.map_tiles.append(list(line))
+
+    def draw_map(self, display_surface):
+        self.map_rects = []
+        y = 0
+        for line in self.map_tiles:
+            x = 0
+            for tile in line:
+                if tile == "1":
+                    display_surface.blit(floor_tile, (x * TILE_SIZE, y * TILE_SIZE))
+                if tile != "0":
+                    self.map_rects.append(pygame.Rect((x * TILE_SIZE, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE)))
+                x += 1
+            y += 1
+
+    def test_map_collision(self, rect):
+        self.map_colliders = []
+        for tile in self.map_rects:
+            if pygame.Rect.colliderect(rect, tile):
+                self.map_colliders.append(tile)
+
+    def map_collision(self, rect, movement):
+        collision_types = {'top': False, 'bottom': False, 'left': False, 'right': False}
+        rect.x += movement[0]
+        self.test_map_collision(rect)
+        for tile in self.map_colliders:
+            if movement[0] > 0:
+                rect.right = tile.left
+                collision_types['right'] = True
+            elif movement[0] < 0:
+                rect.left = tile.right
+                collision_types['left'] = True
+        rect.y += movement[1]
+        self.test_map_collision(rect)
+        for tile in self.map_colliders:
+            if movement[1] > 0:
+                rect.bottom = tile.top
+                movement[1] = 0
+                collision_types['bottom'] = True
+            elif movement[1] < 0:
+                rect.top = tile.bottom
+                movement[1] = 2
+                collision_types['top'] = True
+        return rect, collision_types
 
 
-def move(rect, movement, tiles):
-    collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
-    rect.x += movement[0]
-    hit_list = collision_test(rect, tiles)
-    for tile in hit_list:
-        if movement[0] > 0:
-            rect.right = tile.left
-            collision_types['right'] = True
-        elif movement[0] < 0:
-            rect.left = tile.right
-            collision_types['left'] = True
-    rect.y += movement[1]
-    hit_list = collision_test(rect, tiles)
-    for tile in hit_list:
-        if movement[1] > 0:
-            rect.bottom = tile.top
-            collision_types['bottom'] = True
-        elif movement[1] < 0:
-            rect.top = tile.bottom
-            collision_types['top'] = True
-    return rect, collision_types
+# levels
+level_one = Level('map.txt')
+level_one.load_map()
 
+player.becomes_colourful()
 
-moving_right = False
-moving_left = False
-
-# player_location = [50,50]
-player_y_momentum = 0
-air_timer = 0
-
-player_rect = pygame.Rect(50, 50, player_image.get_width(), player_image.get_height())
-# pygame.image.get_rect(center = player_location)
-test_rect = pygame.Rect(100, 100, 100, 50)
-
+# run game
 while True:
     display.fill((146, 244, 255))
 
-    tile_rects = []
-    y = 0
-    for row in game_map:
-        x = 0
-        for tile in row:
-            if tile == '1':
-                display.blit(floor_image, (x * TILE_SIZE, y * TILE_SIZE))
-            if tile == '2':
-                display.blit(crate_image, (x * TILE_SIZE, y * TILE_SIZE))
-            if tile != '0':
-                tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
-            x += 1
-        y += 1
+    level_one.draw_map(display)
+    player.player_movement = [0,0]
+    player.movement()
+    player.change_colour()
 
-    # if player_location[1] > WINDOW_SIZE[1]-player_image.get_height():
-    # player_y_momentum = -player_y_momentum
-    # else:
-
-    player_movement = [0, 0]
-    if moving_right:
-        player_movement[0] += 2
-    if moving_left:
-        player_movement[0] -= 2
-    player_movement[1] += player_y_momentum
-    player_y_momentum += 0.2
-    if player_y_momentum > 5:
-        player_y_momentum = 5
-
-    player_rect, collisions = move(player_rect, player_movement, tile_rects)
+    player.rect, collisions = level_one.map_collision(player.rect, player.player_movement)
     if collisions['bottom']:
-        player_y_momentum = 0
-        air_timer = 0
+        player.player_y_momentum = 0
+        player.air_timer = 0
     else:
-        air_timer +=1
+        player.air_timer += 1
     if collisions['top']:
-        player_y_momentum = 2
+        player.player_y_momentum = 2
 
-    display.blit(player_image, (player_rect.x, player_rect.y))
-    # if player_rect.colliderect(test_rect):
-    # pygame.draw.rect(screen,(255,0,0),test_rect)
-    # else:
-    # pygame.draw.rect(screen,(0,0,0),test_rect)
+    display.blit(player.image, (player.rect.x, player.rect.y))
 
     for event in pygame.event.get():
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == KEYDOWN:
-            if event.key == K_RIGHT:
-                moving_right = True
-            if event.key == K_LEFT:
-                moving_left = True
-            if event.key == K_UP:
-                if air_timer < 6:
-                    player_y_momentum = -5
-        if event.type == KEYUP:
-            if event.key == K_RIGHT:
-                moving_right = False
-            if event.key == K_LEFT:
-                moving_left = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LSHIFT and player.is_colourful:
+                player.is_changing_colour = True
+            if event.key == pygame.K_z:
+                if player.air_timer < 6:
+                    player.player_y_momentum = -7
+                    player.is_jumping = True
+            if not player.is_changing_colour:
+                if event.key == pygame.K_RIGHT:
+                    player.moving_right = True
+                if event.key == pygame.K_LEFT:
+                    player.moving_left = True
+            else:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_LEFT]:
+                    player.colour_index += 1
+                    if player.colour_index > 2:
+                        player.colour_index = 0
+                elif keys[pygame.K_RIGHT]:
+                    player.colour_index -= 1
+                    if player.colour_index < 0:
+                        player.colour_index = 2
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_RIGHT:
+                player.moving_right = False
+            if event.key == pygame.K_LEFT:
+                player.moving_left = False
+            if event.key == pygame.K_z:
+                player.is_jumping = False
+            if event.key == pygame.K_LSHIFT and player.is_colourful:
+                player.is_changing_colour = False
 
     surf = pygame.transform.scale(display, WINDOW_SIZE)
     screen.blit(surf, (0, 0))
