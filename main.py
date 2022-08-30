@@ -19,10 +19,6 @@ settings_display = pygame.Surface((320, 180))
 # player init
 player = Player()
 
-
-
-
-
 # levels
 level_one = Level('map.txt')
 level_one.load_map()
