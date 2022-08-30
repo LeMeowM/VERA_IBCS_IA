@@ -2,6 +2,7 @@ import pygame
 from sys import exit
 from PIL import Image, ImageSequence
 
+
 pygame.init()
 
 
@@ -419,6 +420,7 @@ class Player(pygame.sprite.Sprite):
 
     def becomes_colourful(self):
         self.is_colourful = True
+        self.colour_index = 0
         self.player_colours['blue'] = True
 
     # changes the colour of the sprite when the player holds down left shift

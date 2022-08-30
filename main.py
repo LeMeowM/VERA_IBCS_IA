@@ -1,6 +1,7 @@
 import pygame, sys
 from PlayerClass import Player
 from LevelManagerClass import Level
+from GameUIClass import GameUI
 
 # from UserInterface import UserInterface
 menu_clock = pygame.time.Clock()
@@ -8,6 +9,8 @@ clock = pygame.time.Clock()
 pygame.display.set_caption('Colour!')
 
 pygame.init()
+
+ui = GameUI()
 
 WINDOW_SIZE = (1280, 720)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
@@ -23,7 +26,7 @@ player = Player()
 level_one = Level('map.txt')
 level_one.load_map()
 
-# player.becomes_colourful()
+player.becomes_colourful()
 
 
 # run game
@@ -63,6 +66,7 @@ def run_game():
                         player.is_jumping = True
                         player.is_idle = False
                 if not player.is_changing_colour:
+                    ui.cur_colour_line = ui.colour_line
                     if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]: # event.key == pygame.K_LEFT and event.key == pygame.K_RIGHT:
                         player.is_idle = True
                         player.moving_right, player.moving_left = False, False
@@ -84,6 +88,7 @@ def run_game():
                         else:
                             player.colour_index += 1
                         player.change_colour()
+                        ui.change_colour(player, player.colour_index)
                         idle_count = 0
                     elif event.key == pygame.K_RIGHT:
                         if player.colour_index <= 0:
@@ -91,7 +96,9 @@ def run_game():
                         else:
                             player.colour_index -= 1
                         player.change_colour()
+                        ui.change_colour(player, player.colour_index)
                         idle_count = 0
+                    ui.cur_colour_line = ui.changing_colour_ui[ui.colour_index]
                 if event.key == pygame.K_ESCAPE:
                     options_menu()
             if event.type == pygame.KEYUP:
@@ -133,6 +140,7 @@ def run_game():
                         player.is_idle = False
                 if event.key == pygame.K_LSHIFT and player.is_colourful:
                     player.is_changing_colour = False
+                    ui.cur_colour_line = ui.colour_line
 
         if player.player_y_momentum > 1.21:
             player.is_jumping = False
@@ -142,6 +150,7 @@ def run_game():
             if not player.moving_left and not player.moving_right:
                 player.is_idle = True
 
+        ui.draw(display)
         surf = pygame.transform.scale(display, WINDOW_SIZE)
         screen.blit(surf, (0, 0))
         pygame.display.update()
