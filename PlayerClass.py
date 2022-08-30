@@ -463,6 +463,7 @@ class Player(pygame.sprite.Sprite):
         initial_anim = self.cur_anim
         if anim_count >= 5:
             if self.is_jumping:
+                self.anim_index += 1
                 if self.anim_index >= 2:
                     self.anim_index = 2
                     return

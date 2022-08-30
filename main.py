@@ -1,5 +1,6 @@
 import pygame, sys
 from PlayerClass import Player
+from LevelManagerClass import Level
 
 # from UserInterface import UserInterface
 menu_clock = pygame.time.Clock()
@@ -18,76 +19,15 @@ settings_display = pygame.Surface((320, 180))
 # player init
 player = Player()
 
-# load tile images here
-
-floor_tile = pygame.image.load("floor.png").convert_alpha()
-TILE_SIZE = 16
 
 
-class Level:
-    # pass map_file as a string that is the file path of the map
-    def __init__(self, map):
-        self.map_file = map
-        self.map_text = []
-        self.map_tiles = []
-        self.map_rects = []
-        self.map_colliders = []
-
-    def load_map(self):
-        f = open(self.map_file, "r")
-        self.map_text = f.read()
-        f.close()
-        self.map_text = self.map_text.split('\n')
-        for line in self.map_text:
-            self.map_tiles.append(list(line))
-
-    def draw_map(self, display_surface):
-        self.map_rects = []
-        y = 0
-        for line in self.map_tiles:
-            x = 0
-            for tile in line:
-                if tile == "1":
-                    display_surface.blit(floor_tile, (x * TILE_SIZE, y * TILE_SIZE))
-                if tile != "0":
-                    self.map_rects.append(pygame.Rect((x * TILE_SIZE, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE)))
-                x += 1
-            y += 1
-
-    def test_map_collision(self, rect):
-        self.map_colliders = []
-        for tile in self.map_rects:
-            if pygame.Rect.colliderect(rect, tile):
-                self.map_colliders.append(tile)
-
-    def map_collision(self, rect, movement):
-        collision_types = {'top': False, 'bottom': False, 'left': False, 'right': False}
-        rect.x += movement[0]
-        self.test_map_collision(rect)
-        for tile in self.map_colliders:
-            if movement[0] > 0:
-                rect.right = tile.left
-                collision_types['right'] = True
-            elif movement[0] < 0:
-                rect.left = tile.right
-                collision_types['left'] = True
-        rect.y += movement[1]
-        self.test_map_collision(rect)
-        for tile in self.map_colliders:
-            if movement[1] > 0:
-                rect.bottom = tile.top
-                collision_types['bottom'] = True
-            elif movement[1] < 0:
-                rect.top = tile.bottom
-                collision_types['top'] = True
-        return rect, collision_types
 
 
 # levels
 level_one = Level('map.txt')
 level_one.load_map()
 
-player.becomes_colourful()
+# player.becomes_colourful()
 
 
 # run game
@@ -121,10 +61,11 @@ def run_game():
                 player.is_idle = False
                 if keys[pygame.K_LSHIFT] and player.is_colourful:
                     player.is_changing_colour = True
-                if event.key == pygame.K_z:
+                if keys[pygame.K_z]:
                     if player.air_timer < 6:
                         player.player_y_momentum = -7
                         player.is_jumping = True
+                        player.is_idle = False
                 if not player.is_changing_colour:
                     if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]: # event.key == pygame.K_LEFT and event.key == pygame.K_RIGHT:
                         player.is_idle = True
@@ -189,6 +130,10 @@ def run_game():
                         player.is_falling = False
                         player.is_jumping = False
                     else:
+                        if player.is_idle:
+                            player.is_falling = False
+                        else:
+                            player.is_falling = True
                         player.is_idle = False
                 if event.key == pygame.K_LSHIFT and player.is_colourful:
                     player.is_changing_colour = False
