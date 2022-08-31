@@ -30,16 +30,16 @@ class Level:
         for line in self.map_text:
             self.map_tiles.append(list(line))
 
-    def draw_map(self, display_surface):
+    def draw_map(self, display_surface, scroll):
         self.map_rects = []
         y = 0
         for line in self.map_tiles:
             x = 0
             for tile in line:
                 if tile == "1":
-                    display_surface.blit(floor_tile, (x * TILE_SIZE, y * TILE_SIZE))
+                    display_surface.blit(floor_tile, (x * TILE_SIZE - 50 - scroll[0], y * TILE_SIZE - scroll[1]))
                 if tile != "0":
-                    self.map_rects.append(pygame.Rect((x * TILE_SIZE, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE)))
+                    self.map_rects.append(pygame.Rect((x * TILE_SIZE - 50, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE)))
                 x += 1
             y += 1
 

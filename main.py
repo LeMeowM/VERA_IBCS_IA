@@ -18,6 +18,7 @@ display = pygame.Surface((320, 180))
 main_display = pygame.Surface((320, 180))
 options_display = pygame.Surface((320, 180))
 settings_display = pygame.Surface((320, 180))
+true_scroll = [0, 0]
 
 # player init
 player = Player()
@@ -28,15 +29,25 @@ level_one.load_map()
 
 player.becomes_colourful()
 
+background = pygame.image.load('background.png').convert_alpha()
+background_parallax = pygame.image.load('background_parallax.png').convert_alpha()
+foreground_parallax = pygame.image.load('foreground_parallax.png').convert_alpha()
 
 # run game
 def run_game():
     anim_count = 1
     idle_count = 0
     while True:
-        display.fill((146, 244, 255))
+        display.blit(background, [0,0])
+        true_scroll[0] += (player.rect.x - true_scroll[0] - 154) / 10
+        true_scroll[1] += (player.rect.y - true_scroll[1] - 98) / 10
+        scroll = true_scroll.copy()
+        scroll[0] = int(scroll[0])
+        scroll[1] = int(scroll[1])
+        display.blit(background_parallax, [0 - int(0.5*scroll[0]),50 - int(0.1*scroll[1])])
+
+        level_one.draw_map(display, scroll)
         player.update(anim_count, idle_count)
-        level_one.draw_map(display)
 
         player.rect, collisions = level_one.map_collision(player.rect, player.player_movement)
         if collisions['top']:
@@ -50,7 +61,7 @@ def run_game():
         else:
             player.air_timer += 1
 
-        player.draw(display)
+        player.draw(display, scroll)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -150,6 +161,7 @@ def run_game():
             if not player.moving_left and not player.moving_right:
                 player.is_idle = True
 
+        display.blit(foreground_parallax, [-250 - 2*scroll[0], 0 - int(0.5*scroll[1])])
         ui.draw(display)
         surf = pygame.transform.scale(display, WINDOW_SIZE)
         screen.blit(surf, (0, 0))

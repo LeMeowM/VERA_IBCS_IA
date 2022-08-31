@@ -164,9 +164,9 @@ class Player(pygame.sprite.Sprite):
         self.air_timer = 0
         self.rect = pygame.Rect(50, 0, default_state.get_width()-6, default_state.get_height())
 
-    def draw(self, screen):
+    def draw(self, screen, scroll):
         self.image = self.cur_anim[self.anim_index]
-        screen.blit(self.image, (self.rect.x - 3, self.rect.y))
+        screen.blit(self.image, (self.rect.x - 3 - scroll[0], self.rect.y - scroll[1]))
 
     """
     # takes user input from keyboard
@@ -343,7 +343,7 @@ class Player(pygame.sprite.Sprite):
         elif not self.is_falling and (initial_anim == self.green_falling_left_frames or initial_anim == self.green_falling_right_frames):
             if initial_anim == self.green_falling_left_frames or initial_anim == self.green_falling_right_frames:
                 if self.anim_index < 4:
-                    if self.facing_right:
+                    if self.facing_left:
                         self.cur_anim = self.green_falling_left_frames
                     else:
                         self.cur_anim = self.green_falling_right_frames
