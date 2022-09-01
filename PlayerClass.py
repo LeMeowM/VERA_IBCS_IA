@@ -157,12 +157,14 @@ class Player(pygame.sprite.Sprite):
         self.moving_left = False
         self.is_jumping = False
         self.is_falling = False
+        self.init_move = self.moving_left
         self.player_y_momentum = 0
         self.player_x_momentum = 0
         self.player_movement = [0, 0]
-        self.health = 10
+        self.health = 6
         self.air_timer = 0
         self.rect = pygame.Rect(50, 0, default_state.get_width()-6, default_state.get_height())
+        self.damage_cooldown = 240
 
     def draw(self, screen, scroll):
         self.image = self.cur_anim[self.anim_index]
@@ -408,15 +410,27 @@ class Player(pygame.sprite.Sprite):
     def movement(self):
         self.player_movement = [0, 0]
         if self.moving_right:
-            self.player_movement[0] += 2
+            if self.init_move == self.moving_left:
+                self.player_x_momentum = 0
+            self.player_movement[0] += self.player_x_momentum
+            self.player_x_momentum += 0.4
+            if self.player_x_momentum > 2:
+                self.player_x_momentum = 2
         if self.moving_left:
-            self.player_movement[0] += -2
+            if self.init_move == self.moving_right:
+                self.player_x_momentum = 0
+            self.player_movement[0] += self.player_x_momentum
+            self.player_x_momentum += -0.4
+            if self.player_x_momentum < -2:
+                self.player_x_momentum = -2
+        if not self.moving_right and not self.moving_left:
+            self.player_x_momentum = 0
         self.player_movement[1] += self.player_y_momentum
         self.player_y_momentum += 0.4
         if self.player_y_momentum > 5:
             self.player_y_momentum = 5
         if not self.is_jumping and self.player_y_momentum < 0:
-            self.player_y_momentum = 0
+            self.player_y_momentum = 0.5
 
     def becomes_colourful(self):
         self.is_colourful = True
@@ -424,31 +438,6 @@ class Player(pygame.sprite.Sprite):
         self.player_colours['blue'] = True
 
     # changes the colour of the sprite when the player holds down left shift
-    # should also highlight the colour wheel on the top left but i havent done that yet
-    '''
-    def change_colour(self):
-        if self.colour_index == 0:
-            self.player_colours['blue'], self.player_colours['green'], self.player_colours['purple'] = True, False, False
-            if self.is_idle:
-                if self.facing_right:
-                    self.cur_anim = self.blue_idle_right_frames
-                elif self.facing_left:
-                    self.cur_anim = self.blue_idle_left_frames
-        elif self.colour_index == 1:
-            self.player_colours['green'], self.player_colours['purple'], self.player_colours['blue'] = True, False, False
-            if self.is_idle:
-                if self.facing_right:
-                    self.cur_anim = self.green_idle_right_frames
-                elif self.facing_left:
-                    self.cur_anim = self.green_idle_left_frames
-        elif self.colour_index == 2:
-            self.player_colours['purple'], self.player_colours['green'], self.player_colours['blue'] = True, False, False
-            if self.is_idle:
-                if self.facing_right:
-                    self.cur_anim = self.purple_idle_right_frames
-                elif self.facing_left:
-                    self.cur_anim = self.purple_idle_left_frames
-    '''
     # def get_player_colour(self):
     def change_colour(self):
         if self.colour_index == 0:
@@ -462,7 +451,6 @@ class Player(pygame.sprite.Sprite):
             self.purple_anim()
 
     def change_frame(self, anim_count, idle_count):
-        initial_anim = self.cur_anim
         if anim_count >= 5:
             if self.is_jumping:
                 self.anim_index += 1
@@ -483,27 +471,37 @@ class Player(pygame.sprite.Sprite):
             self.anim_index = 0
 
     # detracts health from player after calculating the damage
-    def take_damage(self, rect):
-        self.health -= self.calc_damage(self, rect)
-        if self.health <= 0:
-            self.respawn(self.player_movement)
+    def take_damage(self, room_enemies):
+        for enemy in room_enemies:
+            if pygame.Rect.colliderect(self.rect, enemy.rect):
+                if self.damage_cooldown >= 240:
+                    self.calc_damage(enemy)
+                    self.health -= self.damage
+                    self.damage_cooldown = 0
+        if self.health < 0:
+            self.health = 6
+        self.damage_cooldown += 1
 
-    # def deal_damage(self, rect):
+    def deal_damage(self, room_enemies):
+        for enemy in room_enemies:
+            if pygame.Rect.colliderect(self.rect, enemy.rect):
+                self.calc_damage(enemy)
+                enemy.health -= self.damage
 
     # returns amount of damage from collision based on the colour system
-    def calc_damage(self, rect):
+    def calc_damage(self, enemy):
         if self.player_colours['blue']:
-            if rect.colour == 'red' or rect.colour == 'yellow':
+            if enemy.colour == 'red' or enemy.colour == 'yellow':
                 self.damage = 1
             else:
                 self.damage = 2
         elif self.player_colours['green']:
-            if rect.colour == 'orange' or rect.colour == 'yellow':
+            if enemy.colour == 'orange' or enemy.colour == 'yellow':
                 self.damage = 1
             else:
                 self.damage = 2
         elif self.player_colours['purple']:
-            if rect.colour == 'red' or rect.colour == 'orange':
+            if enemy.colour == 'red' or enemy.colour == 'orange':
                 self.damage = 1
             else:
                 self.damage = 2
@@ -514,7 +512,8 @@ class Player(pygame.sprite.Sprite):
     def respawn(self, respawn_point):
         self.health = 10
 
-    def update(self, anim_count, idle_count):
+    def update(self, anim_count, idle_count, enemies):
         self.movement()
         self.change_frame(anim_count, idle_count)
         self.animations()
+        self.take_damage(enemies)

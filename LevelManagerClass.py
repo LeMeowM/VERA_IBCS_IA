@@ -7,6 +7,14 @@ class LevelManager:
         self.items = []
         self.map_objects = []
 
+    def draw(self, display, scroll):
+        for enemy in self.enemies:
+            enemy.draw(display, scroll)
+
+    def update(self, anim_count):
+        for enemy in self.enemies:
+            enemy.update(anim_count, self.level_map)
+
 
 pygame.display.set_mode()
 floor_tile = pygame.image.load("floor.png").convert_alpha()
