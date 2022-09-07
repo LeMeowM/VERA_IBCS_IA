@@ -24,11 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.is_colourful = False
         self.is_changing_colour = False
         default_state = pygame.image.load('player_default.png').convert_alpha()
-        blue_state = pygame.image.load('player_blue.png').convert_alpha()
-        green_state = pygame.image.load('player_green.png').convert_alpha()
-        purple_state = pygame.image.load('player_purple.png').convert_alpha()
         self.player_colours = {'blue': False, 'green': False, 'purple': False}
-        # self.player_colours = [blue_state, green_state, purple_state, default_state]
         self.colour_index = 3
         self.damage = 0
         self.idle_count = 0
@@ -50,7 +46,8 @@ class Player(pygame.sprite.Sprite):
         load_image_from_gif('player_anim/player_default_anim/player_default_jumping_left/', 'player_default_jumping_left',
                             self.default_jumping_left_frames)
         self.default_falling_left_frames = []
-        load_image_from_gif('player_anim/player_default_anim/player_default_falling_left/', 'player_default_falling_left', self.default_falling_left_frames)
+        load_image_from_gif('player_anim/player_default_anim/player_default_falling_left/', 'player_default_falling_left',
+                            self.default_falling_left_frames)
         self.default_jumping_right_frames = []
         load_image_from_gif('player_anim/player_default_anim/player_default_jumping_right/',
                             'player_default_jumping_right',
@@ -58,7 +55,8 @@ class Player(pygame.sprite.Sprite):
         self.default_falling_right_frames = []
         load_image_from_gif('player_anim/player_default_anim/player_default_falling_right/',
                             'player_default_falling_right', self.default_falling_right_frames)
-        self.default_attacking_frames = []
+        self.default_attack_left_frames = []
+        # load_image_from_gif('player_anim/player_default_anim/player_default_attack_vfx/', 'attack_vfx_anim', self.default_attack_left_frames)
         self.default_damaged_frames = []
 
         self.blue_anim_frames = []
@@ -157,18 +155,37 @@ class Player(pygame.sprite.Sprite):
         self.moving_left = False
         self.is_jumping = False
         self.is_falling = False
+        self.is_attack = False
+        self.is_hit = False
         self.init_move = self.moving_left
         self.player_y_momentum = 0
         self.player_x_momentum = 0
         self.player_movement = [0, 0]
         self.health = 6
         self.air_timer = 0
-        self.rect = pygame.Rect(50, 0, default_state.get_width()-6, default_state.get_height())
-        self.damage_cooldown = 240
 
-    def draw(self, screen, scroll):
+        self.rect = pygame.Rect(50, 0, default_state.get_width()-6, default_state.get_height())
+        self.damage_cooldown = 120
+        self.attack_cooldown = 30
+
+        self.attack_vfx_full = pygame.image.load('player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_1.png').convert_alpha()
+        self.attack_left = []
+        load_image_from_gif('player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_left/', 'attack_vfx_left_anim', self.attack_left)
+        self.attack_right = []
+        load_image_from_gif('player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_right/',
+                            'attack_vfx_right_anim', self.attack_right)
+        self.attack_index = 2
+
+        self.cur_attack_anim = self.attack_left
+        self.attack_image = self.cur_attack_anim[self.attack_index]
+        self.attack_rect = pygame.Rect(50, 0, self.attack_vfx_full.get_width(), self.attack_vfx_full.get_height())
+
+
+    def draw(self, display, scroll):
         self.image = self.cur_anim[self.anim_index]
-        screen.blit(self.image, (self.rect.x - 3 - scroll[0], self.rect.y - scroll[1]))
+        self.attack_image = self.cur_attack_anim[self.attack_index]
+        display.blit(self.image, (self.rect.x - 3 - scroll[0], self.rect.y - scroll[1]))
+        display.blit(self.attack_image, (self.attack_rect.x - scroll[0], self.attack_rect.y - scroll[1]))
 
     """
     # takes user input from keyboard
@@ -452,6 +469,8 @@ class Player(pygame.sprite.Sprite):
 
     def change_frame(self, anim_count, idle_count):
         if anim_count >= 5:
+            if self.attack_index < 4:
+                self.attack_index += 1
             if self.is_jumping:
                 self.anim_index += 1
                 if self.anim_index >= 2:
@@ -473,8 +492,8 @@ class Player(pygame.sprite.Sprite):
     # detracts health from player after calculating the damage
     def take_damage(self, room_enemies):
         for enemy in room_enemies:
-            if pygame.Rect.colliderect(self.rect, enemy.rect):
-                if self.damage_cooldown >= 240:
+            if pygame.Rect.colliderect(self.rect, enemy.rect) and not room_enemies[enemy]:
+                if self.damage_cooldown >= 120:
                     self.calc_damage(enemy)
                     self.health -= self.damage
                     self.damage_cooldown = 0
@@ -482,11 +501,35 @@ class Player(pygame.sprite.Sprite):
             self.health = 6
         self.damage_cooldown += 1
 
+    def attack(self, room_enemies):
+        if self.is_attack and self.attack_cooldown >= 30:
+            self.attack_index = 0
+            self.attack_cooldown = 0
+            if self.facing_left:
+                self.cur_attack_anim = self.attack_left
+            else:
+                self.cur_attack_anim = self.attack_right
+            self.deal_damage(room_enemies)
+            self.is_attack = False
+        else:
+            self.attack_index = 4
+            self.attack_cooldown += 1
+        if self.facing_left:
+            self.attack_rect.x = self.rect.x - 25
+            self.attack_rect.y = self.rect.y
+        else:
+            self.attack_rect.x = self.rect.x + 10
+            self.attack_rect.y = self.rect.y
+
     def deal_damage(self, room_enemies):
         for enemy in room_enemies:
-            if pygame.Rect.colliderect(self.rect, enemy.rect):
+            if pygame.Rect.colliderect(self.attack_rect, enemy.rect):
                 self.calc_damage(enemy)
                 enemy.health -= self.damage
+                if self.facing_left:
+                    self.player_movement[0] += 3
+                else:
+                    self.player_movement[0] -= 3
 
     # returns amount of damage from collision based on the colour system
     def calc_damage(self, enemy):
@@ -510,10 +553,11 @@ class Player(pygame.sprite.Sprite):
 
     # refills player's health and returns them back to their last save point
     def respawn(self, respawn_point):
-        self.health = 10
+        self.health = 6
 
     def update(self, anim_count, idle_count, enemies):
         self.movement()
         self.change_frame(anim_count, idle_count)
         self.animations()
+        self.attack(enemies)
         self.take_damage(enemies)

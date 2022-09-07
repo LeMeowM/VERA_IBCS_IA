@@ -1,10 +1,13 @@
 import pygame
 import sys
+import math
 
-from EnemyClass import Orange_PB_Enem
+from EnemyClass import Orange_PB_Enem, Red_PB_Enem, Yellow_PB_Enem
 from GameUIClass import GameUI
 from LevelManagerClass import Level, LevelManager
 from PlayerClass import Player
+from FontClass import Font
+from SaveAndLoadManager import SaveAndLoadSystem
 
 # from UserInterface import UserInterface
 menu_clock = pygame.time.Clock()
@@ -14,24 +17,29 @@ pygame.display.set_caption('Colour!')
 pygame.init()
 
 ui = GameUI()
+save_load_sys = SaveAndLoadSystem('save_data')
 
 WINDOW_SIZE = (1280, 720)
+GAME_WINDOW = (400, 225)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
-display = pygame.Surface((320, 180))
-main_display = pygame.Surface((320, 180))
-options_display = pygame.Surface((320, 180))
-settings_display = pygame.Surface((320, 180))
+display = pygame.Surface(GAME_WINDOW)
+main_display = pygame.Surface(GAME_WINDOW)
+save_files_display = pygame.Surface(GAME_WINDOW)
+options_display = pygame.Surface(GAME_WINDOW)
+settings_display = pygame.Surface(GAME_WINDOW)
 true_scroll = [0, 0]
 
 # player init
 player = Player()
+data = {'player_x': 0, 'player_y': 0}
 
 # levels
 level_one = Level('map.txt')
-level_one.load_map()
-
+font = Font('font_system/small_font.png')
 level_one_manager = LevelManager(level_one)
-level_one_manager.enemies.append(Orange_PB_Enem())
+level_one_manager.add_enem(Orange_PB_Enem([0, 0]))
+level_one_manager.add_enem(Red_PB_Enem([300, 0]))
+level_one_manager.add_enem(Yellow_PB_Enem([150,0]))
 
 player.becomes_colourful()
 
@@ -39,15 +47,15 @@ background = pygame.image.load('background.png').convert_alpha()
 background_parallax = pygame.image.load('background_parallax.png').convert_alpha()
 foreground_parallax = pygame.image.load('foreground_parallax.png').convert_alpha()
 
-
 # run game
-def run_game():
+def run_game(save_file):
     anim_count = 1
     idle_count = 0
+
     while True:
         display.blit(background, [0, 0])
-        true_scroll[0] += (player.rect.x - true_scroll[0] - 154) / 10
-        true_scroll[1] += (player.rect.y - true_scroll[1] - 98) / 10
+        true_scroll[0] += (player.rect.x - true_scroll[0] - 204) / 10
+        true_scroll[1] += (player.rect.y - true_scroll[1] - 120) / 10
         scroll = true_scroll.copy()
         scroll[0] = int(scroll[0])
         scroll[1] = int(scroll[1])
@@ -74,6 +82,8 @@ def run_game():
         player.draw(display, scroll)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                data['player_x'], data['player_y'] = player.rect.x, player.rect.y
+                save_load_sys.save_file(data, save_file)
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
@@ -86,10 +96,11 @@ def run_game():
                         player.player_y_momentum = -7
                         player.is_jumping = True
                         player.is_idle = False
+                if event.key == pygame.K_x:
+                    player.is_attack = True
                 if not player.is_changing_colour:
                     ui.cur_colour_line = ui.colour_line
-                    if keys[pygame.K_LEFT] and keys[
-                        pygame.K_RIGHT]:  # event.key == pygame.K_LEFT and event.key == pygame.K_RIGHT:
+                    if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]:
                         player.is_idle = True
                         player.moving_right, player.moving_left = False, False
                     if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
@@ -124,10 +135,11 @@ def run_game():
                         idle_count = 0
                     ui.cur_colour_line = ui.changing_colour_ui[ui.colour_index]
                 if event.key == pygame.K_ESCAPE:
-                    options_menu()
+                    options_menu(save_file)
             if event.type == pygame.KEYUP:
                 keys = pygame.key.get_pressed()
-                player.is_idle = True
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_LEFT or event.key == pygame.K_LSHIFT:
+                    player.is_idle = True
                 if event.key == pygame.K_RIGHT:
                     player.moving_right = False
                     if keys[pygame.K_LEFT]:
@@ -168,6 +180,8 @@ def run_game():
                         else:
                             player.is_falling = True
                         player.is_idle = False
+                if event.key == pygame.K_x:
+                    player.is_attack = False
                 if event.key == pygame.K_LSHIFT and player.is_colourful:
                     player.is_changing_colour = False
                     ui.cur_colour_line = ui.colour_line
@@ -180,7 +194,7 @@ def run_game():
             if not player.moving_left and not player.moving_right:
                 player.is_idle = True
 
-        display.blit(foreground_parallax, [-250 - 2 * scroll[0], 0 - int(0.5 * scroll[1])])
+        display.blit(foreground_parallax, [-250 - 2 * scroll[0], 0 - scroll[1]])
         ui.change_health(player)
         ui.draw(display, player)
         surf = pygame.transform.scale(display, WINDOW_SIZE)
@@ -211,11 +225,11 @@ def main_menu():
         main_display.blit(play_button, (play_button_rect.x, play_button_rect.y))
         main_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
 
-        play_button_rect_scaled = pygame.Rect(400, 240, 400, 200)
-        quit_button_rect_scaled = pygame.Rect(400, 480, 400, 200)
+        play_button_rect_scaled = pygame.Rect(scale_loc(play_button_rect.x, play_button_rect.y), scale_size(play_button.get_width(), play_button.get_height()))
+        quit_button_rect_scaled = pygame.Rect(scale_loc(quit_button_rect.x, quit_button_rect.y), scale_size(quit_button.get_width(), quit_button.get_height()))
         if play_button_rect_scaled.collidepoint((m_x, m_y)):
             if click:
-                run_game()
+                save_files_menu()
             main_display.fill('black')
             main_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
             main_display.blit(play_button, (play_button_rect.x, play_button_rect.y - 5))
@@ -231,6 +245,7 @@ def main_menu():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
@@ -246,8 +261,144 @@ def main_menu():
         menu_clock.tick(60)
 
 
-def options_menu():
+def save_files_menu():
     click = False
+    save_files_bg = pygame.image.load('save_files_buttons/save_files.png').convert_alpha()
+    empty_file = pygame.image.load('save_files_buttons/empty_save_file.png').convert_alpha()
+    delete_button = pygame.image.load('save_files_buttons/delete_file_button.png').convert_alpha()
+    delete_rect_1 = pygame.Rect(250, 58, delete_button.get_width(),delete_button.get_height())
+    delete_rect_2 = pygame.Rect(250, 108, delete_button.get_width(), delete_button.get_height())
+    delete_rect_3 = pygame.Rect(250, 158, delete_button.get_width(), delete_button.get_height())
+    delete_highlight = pygame.image.load('save_files_buttons/delete_highlight.png').convert_alpha()
+    save_file_1 = pygame.image.load('save_files_buttons/save_file_1_button.png').convert_alpha()
+    file_1_rect = pygame.Rect(50, 50, save_file_1.get_width(), save_file_1.get_height())
+    save_file_2 = pygame.image.load('save_files_buttons/save_file_2_button.png').convert_alpha()
+    file_2_rect = pygame.Rect(50, 100, save_file_2.get_width(), save_file_2.get_height())
+    save_file_3 = pygame.image.load('save_files_buttons/save_file_3_button.png').convert_alpha()
+    file_3_rect = pygame.Rect(50, 150, save_file_3.get_width(), save_file_3.get_height())
+    hover_highlight = pygame.image.load('save_files_buttons/save_file_highlight.png').convert_alpha()
+    if not save_load_sys.check_for_file('file_1'):
+        save_file_1 = empty_file
+    if not save_load_sys.check_for_file('file_2'):
+        save_file_2 = empty_file
+    if not save_load_sys.check_for_file('file_3'):
+        save_file_3 = empty_file
+    while True:
+        save_files_display.blit(save_files_bg, [0,0])
+        save_files_display.blit(save_file_1, (file_1_rect.x, file_1_rect.y))
+        save_files_display.blit(save_file_2, (file_2_rect.x, file_2_rect.y))
+        save_files_display.blit(save_file_3, (file_3_rect.x, file_3_rect.y))
+        m_x, m_y = pygame.mouse.get_pos()
+
+        file_1_rect_scaled = pygame.Rect(scale_loc(file_1_rect.x, file_1_rect.y),
+                                         scale_size(save_file_1.get_width(), save_file_1.get_height()))
+        file_2_rect_scaled = pygame.Rect(scale_loc(file_2_rect.x, file_2_rect.y),
+                                         scale_size(save_file_2.get_width(), save_file_2.get_height()))
+        file_3_rect_scaled = pygame.Rect(scale_loc(file_3_rect.x, file_3_rect.y),
+                                         scale_size(save_file_3.get_width(), save_file_3.get_height()))
+        delete_rect_1_scaled = pygame.Rect(scale_loc(delete_rect_1.x, delete_rect_1.y), scale_size(delete_button.get_width(), delete_button.get_height()))
+        delete_rect_2_scaled = pygame.Rect(scale_loc(delete_rect_2.x, delete_rect_2.y),
+                                           scale_size(delete_button.get_width(), delete_button.get_height()))
+        delete_rect_3_scaled = pygame.Rect(scale_loc(delete_rect_3.x, delete_rect_3.y),
+                                           scale_size(delete_button.get_width(), delete_button.get_height()))
+        if file_1_rect_scaled.collidepoint((m_x, m_y)):
+            if click:
+                if delete_rect_1_scaled.collidepoint((m_x, m_y)):
+                    save_load_sys.delete_save('file_1')
+                    save_file_1 = empty_file
+                elif save_load_sys.check_for_file('file_1'):
+                    loaded_data = save_load_sys.load_save('file_1')
+                    if loaded_data is not None:
+                        player.rect.x, player.rect.y = loaded_data['player_x'], loaded_data['player_y']
+                        run_game('file_1')
+                else:
+                    run_game('file_1')
+            else:
+                save_files_display.blit(save_files_bg, [0, 0])
+                save_files_display.blit(save_file_1, (file_1_rect.x, file_1_rect.y))
+                save_files_display.blit(save_file_2, (file_2_rect.x, file_2_rect.y))
+                save_files_display.blit(save_file_3, (file_3_rect.x, file_3_rect.y))
+                save_files_display.blit(hover_highlight, (file_1_rect.x, file_1_rect.y))
+                if save_load_sys.check_for_file('file_1'):
+                    save_files_display.blit(delete_button, (delete_rect_1.x, delete_rect_1.y))
+                    if delete_rect_1_scaled.collidepoint((m_x, m_y)):
+                        if click:
+                            save_load_sys.delete_save('file_1')
+                        else:
+                            save_files_display.blit(delete_highlight, (delete_rect_1.x, delete_rect_1.y))
+        elif file_2_rect_scaled.collidepoint((m_x, m_y)):
+            if click:
+                if delete_rect_2_scaled.collidepoint((m_x, m_y)):
+                    save_load_sys.delete_save('file_2')
+                    save_file_2 = empty_file
+                elif save_load_sys.check_for_file('file_2'):
+                    loaded_data = save_load_sys.load_save('file_2')
+                    if loaded_data is not None:
+                        player.rect.x, player.rect.y = loaded_data['player_x'], loaded_data['player_y']
+                    run_game('file_2')
+                else:
+                    run_game('file_2')
+            else:
+                save_files_display.blit(save_files_bg, [0, 0])
+                save_files_display.blit(save_file_1, (file_1_rect.x, file_1_rect.y))
+                save_files_display.blit(save_file_2, (file_2_rect.x, file_2_rect.y))
+                save_files_display.blit(save_file_3, (file_3_rect.x, file_3_rect.y))
+                save_files_display.blit(hover_highlight, (file_2_rect.x, file_2_rect.y))
+                if save_load_sys.check_for_file('file_2'):
+                    save_files_display.blit(delete_button, (delete_rect_2.x, delete_rect_2.y))
+                    if delete_rect_2_scaled.collidepoint((m_x, m_y)):
+                        if click:
+                            save_load_sys.delete_save('file_2')
+                        else:
+                            save_files_display.blit(delete_highlight, (delete_rect_2.x, delete_rect_2.y))
+        elif file_3_rect_scaled.collidepoint((m_x, m_y)):
+            if click:
+                if delete_rect_3_scaled.collidepoint((m_x, m_y)):
+                    save_load_sys.delete_save('file_3')
+                    save_file_3 = empty_file
+                elif save_load_sys.check_for_file('file_3'):
+                    loaded_data = save_load_sys.load_save('file_3')
+                    if loaded_data is not None:
+                        player.rect.x, player.rect.y = loaded_data['player_x'], loaded_data['player_y']
+                    run_game('file_3')
+                else:
+                    run_game('file_3')
+            else:
+                save_files_display.blit(save_files_bg, [0, 0])
+                save_files_display.blit(save_file_1, (file_1_rect.x, file_1_rect.y))
+                save_files_display.blit(save_file_2, (file_2_rect.x, file_2_rect.y))
+                save_files_display.blit(save_file_3, (file_3_rect.x, file_3_rect.y))
+                save_files_display.blit(hover_highlight, (file_3_rect.x, file_3_rect.y))
+                if save_load_sys.check_for_file('file_3'):
+                    save_files_display.blit(delete_button, (delete_rect_3.x, delete_rect_3.y))
+                    if delete_rect_3_scaled.collidepoint((m_x, m_y)):
+                        if click:
+                            save_load_sys.delete_save('file_3')
+                        else:
+                            save_files_display.blit(delete_highlight, (delete_rect_3.x, delete_rect_3.y))
+
+        click = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click = True
+
+        surf = pygame.transform.scale(save_files_display, WINDOW_SIZE)
+        screen.blit(surf, (0, 0))
+        pygame.display.update()
+        menu_clock.tick(60)
+
+
+def options_menu(save_file):
+    click = False
+    options_bg = pygame.image.load('options_buttons/options_bg.png').convert_alpha()
+    pause_bg = pygame.image.load('options_buttons/pause_bg.png').convert_alpha()
     resume_button = pygame.image.load('options_buttons/resume_button.png').convert_alpha()
     resume_button_rect = pygame.Rect(100, 60, resume_button.get_width(), resume_button.get_height())
     settings_button = pygame.image.load('options_buttons/settings_button.png').convert_alpha()
@@ -257,41 +408,51 @@ def options_menu():
     quit_button = pygame.image.load('options_buttons/quit_button.png').convert_alpha()
     quit_button_rect = pygame.Rect(100, 120, quit_button.get_width(), quit_button.get_height())
     while True:
-        options_display.fill('black')
+        options_display.blit(display, [0, 0])
+        options_display.blit(pause_bg, [0, 0])
+        # options_display.blit(options_bg, [0, 0])
         m_x, m_y = pygame.mouse.get_pos()
         options_display.blit(resume_button, (resume_button_rect.x, resume_button_rect.y))
         options_display.blit(settings_button, (settings_button_rect.x, settings_button_rect.y))
         options_display.blit(exit_to_menu_button, (exit_to_menu_button_rect.x, exit_to_menu_button_rect.y))
         options_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
 
-        if resume_button_rect.collidepoint((m_x, m_y)):
+        resume_button_rect_scaled = pygame.Rect(scale_loc(resume_button_rect.x, resume_button_rect.y), scale_size(resume_button.get_width(), resume_button.get_height()))
+        settings_button_rect_scaled = pygame.Rect(scale_loc(settings_button_rect.x, settings_button_rect.y),
+                                                scale_size(settings_button.get_width(), settings_button.get_height()))
+        exit_to_menu_button_rect_scaled = pygame.Rect(scale_loc(exit_to_menu_button_rect.x, exit_to_menu_button_rect.y),
+                                                  scale_size(exit_to_menu_button.get_width(), exit_to_menu_button.get_height()))
+
+        if resume_button_rect_scaled.collidepoint((m_x, m_y)):
             if click:
                 break
             else:
-                options_display.fill('black')
+                options_display.blit(display, [0, 0])
+                options_display.blit(pause_bg, [0, 0])
                 options_display.blit(resume_button, (resume_button_rect.x, resume_button_rect.y - 5))
                 options_display.blit(settings_button, (settings_button_rect.x, settings_button_rect.y))
                 options_display.blit(exit_to_menu_button, (exit_to_menu_button_rect.x, exit_to_menu_button_rect.y))
                 options_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
-        elif exit_to_menu_button_rect.collidepoint((m_x, m_y)):
+        elif settings_button_rect_scaled.collidepoint((m_x, m_y)):
             if click:
-                main_menu()
+                settings()
             else:
-                options_display.fill('black')
+                options_display.blit(display, [0, 0])
+                options_display.blit(pause_bg, [0, 0])
+                options_display.blit(resume_button, (resume_button_rect.x, resume_button_rect.y))
+                options_display.blit(settings_button, (settings_button_rect.x, settings_button_rect.y -5))
+                options_display.blit(exit_to_menu_button, (exit_to_menu_button_rect.x, exit_to_menu_button_rect.y))
+                options_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
+        elif exit_to_menu_button_rect_scaled.collidepoint((m_x, m_y)):
+            if click:
+                confirm_quit(options_display, save_file)
+            else:
+                options_display.blit(display, [0, 0])
+                options_display.blit(pause_bg, [0, 0])
                 options_display.blit(resume_button, (resume_button_rect.x, resume_button_rect.y))
                 options_display.blit(settings_button, (settings_button_rect.x, settings_button_rect.y))
                 options_display.blit(exit_to_menu_button, (exit_to_menu_button_rect.x, exit_to_menu_button_rect.y - 5))
                 options_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
-        elif quit_button_rect.collidepoint((m_x, m_y)):
-            if click:
-                pygame.quit()
-                sys.exit()
-            else:
-                options_display.fill('black')
-                options_display.blit(resume_button, (resume_button_rect.x, resume_button_rect.y))
-                options_display.blit(settings_button, (settings_button_rect.x, settings_button_rect.y))
-                options_display.blit(exit_to_menu_button, (exit_to_menu_button_rect.x, exit_to_menu_button_rect.y))
-                options_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y - 5))
         click = False
 
         for event in pygame.event.get():
@@ -299,8 +460,8 @@ def options_menu():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    run_game()
+                if event.key == pygame.K_ESCAPE:
+                    run_game(save_file)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = True
 
@@ -313,7 +474,7 @@ def options_menu():
 def settings():
     click = False
     while True:
-        settings_display.blit('black')
+        settings_display.blit('black', [0,0])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -329,24 +490,39 @@ def settings():
         pygame.display.update()
         menu_clock.tick(60)
 
-def confirm_quit(cur_display):
+
+def confirm_quit(cur_display, save_file):
     click = False
-    yes_button = None
-    yes_button_rect = None
-    no_button = None
-    no_button_rect = None
-    confirm_quit_screen = None
+    confirm_quit_screen = pygame.image.load('confirm_quit/confirm_quit_bg.png')
+    yes_button = pygame.image.load('confirm_quit/confirm_quit_yes.png')
+    yes_button_rect = pygame.Rect(100, 10, yes_button.get_width(), yes_button.get_height())
+    no_button = pygame.image.load('confirm_quit/confirm_quit_no.png')
+    no_button_rect = pygame.Rect(100, 20, no_button.get_width(), no_button.get_height())
     while True:
-        cur_display.blit('black')
+        cur_display.blit(confirm_quit_screen, [0, 0])
+        cur_display.blit(yes_button, (yes_button_rect.x, yes_button_rect.y))
+        cur_display.blit(no_button, (no_button_rect.x, no_button_rect.y))
         m_x, m_y = pygame.mouse.get_pos()
+        yes_button_rect_scaled = pygame.Rect(scale_loc(yes_button_rect.x, yes_button_rect.y), scale_size(yes_button.get_width(), yes_button.get_height()))
+        no_button_rect_scaled = pygame.Rect(scale_loc(no_button_rect.x, no_button_rect.y),
+                                             scale_size(no_button.get_width(), no_button.get_height()))
 
-        if yes_button_rect.collidepoint((m_x, m_y)):
+        if yes_button_rect_scaled.collidepoint((m_x, m_y)):
             if click:
-                pygame.quit()
-                sys.exit()
+                data['player_x'], data['player_y'] = player.rect.x, player.rect.y
+                save_load_sys.save_file(data, save_file)
+                main_menu()
             else:
-                cur_display.blit(yes_button, [0,0])
-
+                cur_display.blit(confirm_quit_screen, [0, 0])
+                cur_display.blit(yes_button, (yes_button_rect.x, yes_button_rect.y-1))
+                cur_display.blit(no_button, (no_button_rect.x, no_button_rect.y))
+        elif no_button_rect_scaled.collidepoint((m_x, m_y)):
+            if click:
+                break
+            else:
+                cur_display.blit(confirm_quit_screen, [0, 0])
+                cur_display.blit(yes_button, (yes_button_rect.x, yes_button_rect.y))
+                cur_display.blit(no_button, (no_button_rect.x, no_button_rect.y-1))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -359,6 +535,18 @@ def confirm_quit(cur_display):
         pygame.display.update()
         menu_clock.tick(60)
 
+
+
+
+def scale_loc(x,y):
+    scaled_x = (x/GAME_WINDOW[0])*WINDOW_SIZE[0]
+    scaled_y = (y/GAME_WINDOW[1])*WINDOW_SIZE[1]
+    return scaled_x, scaled_y
+
+def scale_size(w,h):
+    scaled_w = (w / GAME_WINDOW[0]) * WINDOW_SIZE[0]
+    scaled_h = (h / GAME_WINDOW[1]) * WINDOW_SIZE[1]
+    return scaled_w, scaled_h
 
 
 main_menu()

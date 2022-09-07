@@ -3,9 +3,13 @@ import pygame
 class LevelManager:
     def __init__(self, level_map):
         self.level_map = level_map
-        self.enemies = []
+        self.level_map.load_map()
+        self.enemies = {}
         self.items = []
         self.map_objects = []
+
+    def add_enem(self, enemy):
+        self.enemies.update({enemy: enemy.is_dead})
 
     def draw(self, display, scroll):
         for enemy in self.enemies:
@@ -14,6 +18,7 @@ class LevelManager:
     def update(self, anim_count):
         for enemy in self.enemies:
             enemy.update(anim_count, self.level_map)
+            self.enemies[enemy] = enemy.is_dead
 
 
 pygame.display.set_mode()

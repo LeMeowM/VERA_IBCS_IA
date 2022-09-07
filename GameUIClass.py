@@ -36,17 +36,18 @@ class GameUI:
         self.health = 6
         self.cur_health = self.health_ui[self.health]
         self.power_line= pygame.image.load('ui/power_line_ui.png').convert_alpha()
+        self.loc = [8, 0]
 
     def draw(self, display, player):
         self.change_health(player)
         if player.is_colourful:
-            display.blit(self.colours, [0, 0])
-            display.blit(self.cur_health, [0, 0])
-            display.blit(self.cur_colour_line, [0, 0])
-            display.blit(self.power_line, [0, 0])
+            display.blit(self.colours, self.loc)
+            display.blit(self.cur_health, self.loc)
+            display.blit(self.cur_colour_line, self.loc)
+            display.blit(self.power_line, self.loc)
         else:
-            display.blit(self.cur_health, [0, 0])
-            display.blit(self.default_ui, [0, 0])
+            display.blit(self.cur_health, self.loc)
+            display.blit(self.default_ui, self.loc)
 
     def change_colour(self, player, colour_index):
         if not player.is_changing_colour:
@@ -60,6 +61,7 @@ class GameUI:
             self.cur_health = self.health_ui[self.health]
         else:
             self.cur_health = self.default_health_ui[self.health]
+
 
 
 
