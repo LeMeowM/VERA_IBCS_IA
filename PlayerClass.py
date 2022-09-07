@@ -526,10 +526,11 @@ class Player(pygame.sprite.Sprite):
             if pygame.Rect.colliderect(self.attack_rect, enemy.rect):
                 self.calc_damage(enemy)
                 enemy.health -= self.damage
-                if self.facing_left:
-                    self.player_movement[0] += 3
-                else:
-                    self.player_movement[0] -= 3
+                if not enemy.is_dead:
+                    if self.facing_left:
+                        self.player_movement[0] += 3
+                    else:
+                        self.player_movement[0] -= 3
 
     # returns amount of damage from collision based on the colour system
     def calc_damage(self, enemy):
