@@ -2,11 +2,13 @@ import pygame
 
 class LevelManager:
     def __init__(self, level_map):
+        # level_map is a Level object
         self.level_map = level_map
         self.level_map.load_map()
         self.enemies = {}
         self.items = []
         self.map_objects = []
+        self.room_index = 0
 
     def add_enem(self, enemy):
         self.enemies.update({enemy: enemy.is_dead})
@@ -14,6 +16,9 @@ class LevelManager:
     def draw(self, display, scroll):
         for enemy in self.enemies:
             enemy.draw(display, scroll)
+
+    def set_room_index(self, room_index):
+        self.room_index = room_index
 
     def update(self, anim_count):
         for enemy in self.enemies:
@@ -23,6 +28,7 @@ class LevelManager:
 
 pygame.display.set_mode()
 floor_tile = pygame.image.load("floor.png").convert_alpha()
+black_tile = pygame.image.load("black_tile.png").convert_alpha()
 TILE_SIZE = 16
 
 
@@ -51,6 +57,8 @@ class Level:
             for tile in line:
                 if tile == "1":
                     display_surface.blit(floor_tile, (x * TILE_SIZE - 50 - scroll[0], y * TILE_SIZE - scroll[1]))
+                if tile == "x":
+                    display_surface.blit(black_tile, (x * TILE_SIZE - 50 - scroll[0], y * TILE_SIZE - scroll[1]))
                 if tile != "0":
                     self.map_rects.append(pygame.Rect((x * TILE_SIZE - 50, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE)))
                 x += 1

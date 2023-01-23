@@ -1,6 +1,6 @@
 import pygame, sys
 from PIL import Image, ImageSequence
-from LevelManagerClass import Level
+from LevelManagerClass import Level, LevelManager
 
 
 def load_image_from_gif(file_path, gif_name, images):

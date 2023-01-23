@@ -8,6 +8,7 @@ from LevelManagerClass import Level, LevelManager
 from PlayerClass import Player
 from FontClass import Font
 from SaveAndLoadManager import SaveAndLoadSystem
+from AreaManagerClass import AreaManager
 
 # from UserInterface import UserInterface
 menu_clock = pygame.time.Clock()
@@ -21,7 +22,7 @@ save_load_sys = SaveAndLoadSystem('save_data')
 
 WINDOW_SIZE = (1280, 720)
 GAME_WINDOW = (400, 225)
-screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
+screen = pygame.display.set_mode(WINDOW_SIZE, pygame.FULLSCREEN)
 display = pygame.Surface(GAME_WINDOW)
 main_display = pygame.Surface(GAME_WINDOW)
 save_files_display = pygame.Surface(GAME_WINDOW)
@@ -34,12 +35,17 @@ player = Player()
 data = {'player_x': 0, 'player_y': 0}
 
 # levels
-level_one = Level('map.txt')
+level_one = Level('room1.txt')
 font = Font('font_system/small_font.png')
 level_one_manager = LevelManager(level_one)
 level_one_manager.add_enem(Orange_PB_Enem([0, 0]))
 level_one_manager.add_enem(Red_PB_Enem([300, 0]))
 level_one_manager.add_enem(Yellow_PB_Enem([150,0]))
+level_two = Level('room2.txt')
+level_two_manager = LevelManager(level_two)
+
+rooms = [level_one_manager, level_two_manager]
+tutorial = AreaManager(rooms)
 
 player.becomes_colourful()
 
