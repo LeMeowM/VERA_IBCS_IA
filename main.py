@@ -2,7 +2,8 @@ import pygame
 import sys
 import math
 
-from EnemyClass import Orange_PB_Enem, Red_PB_Enem, Yellow_PB_Enem
+from PaintBlobEnemyClass import OrangePBEnem, RedPBEnem, YellowPBEnem
+from PygmyPaintEnemyClass import OrangePygmyEnem, RedPygmyEnem, YellowPygmyEnem
 from GameUIClass import GameUI
 from LevelManagerClass import Level, LevelManager
 from PlayerClass import Player
@@ -32,26 +33,30 @@ true_scroll = [0, 0]
 
 # player init
 player = Player()
-data = {'player_x': 0, 'player_y': 0}
+is_game_complete = False
+data = {'player_x': 0, 'player_y': 0, 'game_complete': is_game_complete}
 
 # levels
 level_one = Level('room1.txt')
 font = Font('font_system/small_font.png')
 level_one_manager = LevelManager(level_one)
-level_one_manager.add_enem(Orange_PB_Enem([0, 0]))
-level_one_manager.add_enem(Red_PB_Enem([300, 0]))
-level_one_manager.add_enem(Yellow_PB_Enem([150,0]))
+level_one_manager.add_enem(OrangePBEnem([0, 0]))
+level_one_manager.add_enem(RedPBEnem([300, 0]))
+level_one_manager.add_enem(YellowPBEnem([150, 0]))
+level_one_manager.add_enem(YellowPygmyEnem([150, 0]))
 level_two = Level('room2.txt')
 level_two_manager = LevelManager(level_two)
 
 rooms = [level_one_manager, level_two_manager]
 tutorial = AreaManager(rooms)
+cur_level = tutorial.cur_room
 
 player.becomes_colourful()
 
 background = pygame.image.load('background.png').convert_alpha()
 background_parallax = pygame.image.load('background_parallax.png').convert_alpha()
 foreground_parallax = pygame.image.load('foreground_parallax.png').convert_alpha()
+
 
 # run game
 def run_game(save_file):
@@ -67,10 +72,10 @@ def run_game(save_file):
         scroll[1] = int(scroll[1])
         display.blit(background_parallax, [0 - int(0.5 * scroll[0]), 50 - int(0.1 * scroll[1])])
 
-        level_one.draw_map(display, scroll)
+        cur_level.level_map.draw_map(display, scroll)
         player.update(anim_count, idle_count, level_one_manager.enemies)
-        level_one_manager.update(anim_count)
-        level_one_manager.draw(display, scroll)
+        cur_level.update(anim_count, player.rect)
+        cur_level.draw(display, scroll)
 
         player.rect, collisions = level_one.map_collision(player.rect, player.player_movement)
 
@@ -88,7 +93,7 @@ def run_game(save_file):
         player.draw(display, scroll)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                data['player_x'], data['player_y'] = player.rect.x, player.rect.y
+                data['player_x'], data['player_y'], data['game_complete'] = player.rect.x, player.rect.y, is_game_complete
                 save_load_sys.save_file(data, save_file)
                 pygame.quit()
                 sys.exit()
@@ -200,7 +205,7 @@ def run_game(save_file):
             if not player.moving_left and not player.moving_right:
                 player.is_idle = True
 
-        display.blit(foreground_parallax, [-250 - 2 * scroll[0], 0 - scroll[1]])
+        # display.blit(foreground_parallax, [-250 - 2 * scroll[0], 0 - scroll[1]])
         ui.change_health(player)
         ui.draw(display, player)
         surf = pygame.transform.scale(display, WINDOW_SIZE)

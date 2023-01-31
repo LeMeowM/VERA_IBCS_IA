@@ -171,7 +171,7 @@ class AbstractPaintBlobEnemy(pygame.sprite.Sprite):
         if self.y_momentum > 5:
             self.y_momentum = 5
 
-    def update(self, anim_count, map):
+    def update(self, anim_count, map, player_rect):
         if self.health > 0:
             self.enem_movement(map)
             self.is_dead = False
@@ -227,14 +227,16 @@ class AbstractPaintBlobEnemy(pygame.sprite.Sprite):
                 'yellow_death', self.death_right_anim)
 
 
-class Orange_PB_Enem(AbstractPaintBlobEnemy):
+class OrangePBEnem(AbstractPaintBlobEnemy):
     def __init__(self, loc):
         super().__init__(0, loc)
 
-class Red_PB_Enem(AbstractPaintBlobEnemy):
+
+class RedPBEnem(AbstractPaintBlobEnemy):
     def __init__(self, loc):
         super().__init__(1, loc)
 
-class Yellow_PB_Enem(AbstractPaintBlobEnemy):
+
+class YellowPBEnem(AbstractPaintBlobEnemy):
     def __init__(self, loc):
         super().__init__(2, loc)

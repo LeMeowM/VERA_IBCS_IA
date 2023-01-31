@@ -20,9 +20,9 @@ class LevelManager:
     def set_room_index(self, room_index):
         self.room_index = room_index
 
-    def update(self, anim_count):
+    def update(self, anim_count, player_rect):
         for enemy in self.enemies:
-            enemy.update(anim_count, self.level_map)
+            enemy.update(anim_count, self.level_map, player_rect)
             self.enemies[enemy] = enemy.is_dead
 
 

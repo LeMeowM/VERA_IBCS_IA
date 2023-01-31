@@ -7,10 +7,17 @@ class AreaManager:
         # rooms contains room manager objects
         self.rooms = rooms
         self.cur_room = self.rooms[self.room_index]
+        self.set_room_indexes()
 
     def set_room(self, room_index):
         self.room_index = room_index
         self.cur_room = self.rooms[self.room_index]
+
+    def set_room_indexes(self):
+        i = 0
+        for room in self.rooms:
+            room.set_room_index(i)
+            i += 1
 
     def add_room(self, room):
         self.rooms.append(room)
