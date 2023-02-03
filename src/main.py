@@ -18,7 +18,7 @@ pygame.display.set_caption('Colour!')
 pygame.init()
 
 ui = GameUI()
-save_load_sys = SaveAndLoadSystem('save_data')
+save_load_sys = SaveAndLoadSystem('../resources/data/save_data')
 
 WINDOW_SIZE = (1280, 720)
 GAME_WINDOW = (400, 225)
@@ -36,14 +36,14 @@ is_game_complete = False
 data = {'player_x': 0, 'player_y': 0, 'game_complete': is_game_complete}
 
 # levels
-level_one = Level('room1.txt')
+level_one = Level('../resources/data/maps/room1.txt')
 font = Font('../resources/textures/font_system/small_font.png')
 level_one_manager = LevelManager(level_one)
 level_one_manager.add_enem(OrangePBEnem([0, 0]))
 level_one_manager.add_enem(RedPBEnem([300, 0]))
 level_one_manager.add_enem(YellowPBEnem([150, 0]))
 level_one_manager.add_enem(YellowPygmyEnem([150, 0]))
-level_two = Level('room2.txt')
+level_two = Level('../resources/data/maps/room2.txt')
 level_two_manager = LevelManager(level_two)
 
 rooms = [level_one_manager, level_two_manager]
@@ -52,7 +52,7 @@ cur_level = tutorial.cur_room
 
 player.becomes_colourful()
 
-background = pygame.image.load('../background.png').convert_alpha()
+background = pygame.image.load('../resources/textures/MapItems/background.png').convert_alpha()
 background_parallax = pygame.image.load('../background_parallax.png').convert_alpha()
 foreground_parallax = pygame.image.load('../foreground_parallax.png').convert_alpha()
 
@@ -92,7 +92,8 @@ def run_game(save_file):
         player.draw(display, scroll)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                data['player_x'], data['player_y'], data['game_complete'] = player.rect.x, player.rect.y, is_game_complete
+                data['player_x'], data['player_y'], data[
+                    'game_complete'] = player.rect.x, player.rect.y, is_game_complete
                 save_load_sys.save_file(data, save_file)
                 pygame.quit()
                 sys.exit()
@@ -235,8 +236,10 @@ def main_menu():
         main_display.blit(play_button, (play_button_rect.x, play_button_rect.y))
         main_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
 
-        play_button_rect_scaled = pygame.Rect(scale_loc(play_button_rect.x, play_button_rect.y), scale_size(play_button.get_width(), play_button.get_height()))
-        quit_button_rect_scaled = pygame.Rect(scale_loc(quit_button_rect.x, quit_button_rect.y), scale_size(quit_button.get_width(), quit_button.get_height()))
+        play_button_rect_scaled = pygame.Rect(scale_loc(play_button_rect.x, play_button_rect.y),
+                                              scale_size(play_button.get_width(), play_button.get_height()))
+        quit_button_rect_scaled = pygame.Rect(scale_loc(quit_button_rect.x, quit_button_rect.y),
+                                              scale_size(quit_button.get_width(), quit_button.get_height()))
         if play_button_rect_scaled.collidepoint((m_x, m_y)):
             if click:
                 save_files_menu()
@@ -255,7 +258,6 @@ def main_menu():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
@@ -276,7 +278,7 @@ def save_files_menu():
     save_files_bg = pygame.image.load('../resources/textures/save_files_buttons/save_files.png').convert_alpha()
     empty_file = pygame.image.load('../resources/textures/save_files_buttons/empty_save_file.png').convert_alpha()
     delete_button = pygame.image.load('../resources/textures/save_files_buttons/delete_file_button.png').convert_alpha()
-    delete_rect_1 = pygame.Rect(250, 58, delete_button.get_width(),delete_button.get_height())
+    delete_rect_1 = pygame.Rect(250, 58, delete_button.get_width(), delete_button.get_height())
     delete_rect_2 = pygame.Rect(250, 108, delete_button.get_width(), delete_button.get_height())
     delete_rect_3 = pygame.Rect(250, 158, delete_button.get_width(), delete_button.get_height())
     delete_highlight = pygame.image.load(
@@ -296,7 +298,7 @@ def save_files_menu():
     if not save_load_sys.check_for_file('file_3'):
         save_file_3 = empty_file
     while True:
-        save_files_display.blit(save_files_bg, [0,0])
+        save_files_display.blit(save_files_bg, [0, 0])
         save_files_display.blit(save_file_1, (file_1_rect.x, file_1_rect.y))
         save_files_display.blit(save_file_2, (file_2_rect.x, file_2_rect.y))
         save_files_display.blit(save_file_3, (file_3_rect.x, file_3_rect.y))
@@ -308,7 +310,8 @@ def save_files_menu():
                                          scale_size(save_file_2.get_width(), save_file_2.get_height()))
         file_3_rect_scaled = pygame.Rect(scale_loc(file_3_rect.x, file_3_rect.y),
                                          scale_size(save_file_3.get_width(), save_file_3.get_height()))
-        delete_rect_1_scaled = pygame.Rect(scale_loc(delete_rect_1.x, delete_rect_1.y), scale_size(delete_button.get_width(), delete_button.get_height()))
+        delete_rect_1_scaled = pygame.Rect(scale_loc(delete_rect_1.x, delete_rect_1.y),
+                                           scale_size(delete_button.get_width(), delete_button.get_height()))
         delete_rect_2_scaled = pygame.Rect(scale_loc(delete_rect_2.x, delete_rect_2.y),
                                            scale_size(delete_button.get_width(), delete_button.get_height()))
         delete_rect_3_scaled = pygame.Rect(scale_loc(delete_rect_3.x, delete_rect_3.y),
@@ -430,11 +433,13 @@ def options_menu(save_file):
         options_display.blit(exit_to_menu_button, (exit_to_menu_button_rect.x, exit_to_menu_button_rect.y))
         options_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
 
-        resume_button_rect_scaled = pygame.Rect(scale_loc(resume_button_rect.x, resume_button_rect.y), scale_size(resume_button.get_width(), resume_button.get_height()))
+        resume_button_rect_scaled = pygame.Rect(scale_loc(resume_button_rect.x, resume_button_rect.y),
+                                                scale_size(resume_button.get_width(), resume_button.get_height()))
         settings_button_rect_scaled = pygame.Rect(scale_loc(settings_button_rect.x, settings_button_rect.y),
-                                                scale_size(settings_button.get_width(), settings_button.get_height()))
+                                                  scale_size(settings_button.get_width(), settings_button.get_height()))
         exit_to_menu_button_rect_scaled = pygame.Rect(scale_loc(exit_to_menu_button_rect.x, exit_to_menu_button_rect.y),
-                                                  scale_size(exit_to_menu_button.get_width(), exit_to_menu_button.get_height()))
+                                                      scale_size(exit_to_menu_button.get_width(),
+                                                                 exit_to_menu_button.get_height()))
 
         if resume_button_rect_scaled.collidepoint((m_x, m_y)):
             if click:
@@ -453,7 +458,7 @@ def options_menu(save_file):
                 options_display.blit(display, [0, 0])
                 options_display.blit(pause_bg, [0, 0])
                 options_display.blit(resume_button, (resume_button_rect.x, resume_button_rect.y))
-                options_display.blit(settings_button, (settings_button_rect.x, settings_button_rect.y -5))
+                options_display.blit(settings_button, (settings_button_rect.x, settings_button_rect.y - 5))
                 options_display.blit(exit_to_menu_button, (exit_to_menu_button_rect.x, exit_to_menu_button_rect.y))
                 options_display.blit(quit_button, (quit_button_rect.x, quit_button_rect.y))
         elif exit_to_menu_button_rect_scaled.collidepoint((m_x, m_y)):
@@ -487,7 +492,7 @@ def options_menu(save_file):
 def settings():
     click = False
     while True:
-        settings_display.blit('black', [0,0])
+        settings_display.blit('black', [0, 0])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -516,9 +521,10 @@ def confirm_quit(cur_display, save_file):
         cur_display.blit(yes_button, (yes_button_rect.x, yes_button_rect.y))
         cur_display.blit(no_button, (no_button_rect.x, no_button_rect.y))
         m_x, m_y = pygame.mouse.get_pos()
-        yes_button_rect_scaled = pygame.Rect(scale_loc(yes_button_rect.x, yes_button_rect.y), scale_size(yes_button.get_width(), yes_button.get_height()))
+        yes_button_rect_scaled = pygame.Rect(scale_loc(yes_button_rect.x, yes_button_rect.y),
+                                             scale_size(yes_button.get_width(), yes_button.get_height()))
         no_button_rect_scaled = pygame.Rect(scale_loc(no_button_rect.x, no_button_rect.y),
-                                             scale_size(no_button.get_width(), no_button.get_height()))
+                                            scale_size(no_button.get_width(), no_button.get_height()))
 
         if yes_button_rect_scaled.collidepoint((m_x, m_y)):
             if click:
@@ -527,7 +533,7 @@ def confirm_quit(cur_display, save_file):
                 main_menu()
             else:
                 cur_display.blit(confirm_quit_screen, [0, 0])
-                cur_display.blit(yes_button, (yes_button_rect.x, yes_button_rect.y-1))
+                cur_display.blit(yes_button, (yes_button_rect.x, yes_button_rect.y - 1))
                 cur_display.blit(no_button, (no_button_rect.x, no_button_rect.y))
         elif no_button_rect_scaled.collidepoint((m_x, m_y)):
             if click:
@@ -535,7 +541,7 @@ def confirm_quit(cur_display, save_file):
             else:
                 cur_display.blit(confirm_quit_screen, [0, 0])
                 cur_display.blit(yes_button, (yes_button_rect.x, yes_button_rect.y))
-                cur_display.blit(no_button, (no_button_rect.x, no_button_rect.y-1))
+                cur_display.blit(no_button, (no_button_rect.x, no_button_rect.y - 1))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -549,14 +555,13 @@ def confirm_quit(cur_display, save_file):
         menu_clock.tick(60)
 
 
-
-
-def scale_loc(x,y):
-    scaled_x = (x/GAME_WINDOW[0])*WINDOW_SIZE[0]
-    scaled_y = (y/GAME_WINDOW[1])*WINDOW_SIZE[1]
+def scale_loc(x, y):
+    scaled_x = (x / GAME_WINDOW[0]) * WINDOW_SIZE[0]
+    scaled_y = (y / GAME_WINDOW[1]) * WINDOW_SIZE[1]
     return scaled_x, scaled_y
 
-def scale_size(w,h):
+
+def scale_size(w, h):
     scaled_w = (w / GAME_WINDOW[0]) * WINDOW_SIZE[0]
     scaled_h = (h / GAME_WINDOW[1]) * WINDOW_SIZE[1]
     return scaled_w, scaled_h
