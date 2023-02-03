@@ -1,36 +1,5 @@
 import pygame
 
-class LevelManager:
-    def __init__(self, level_map):
-        # level_map is a Level object
-        self.level_map = level_map
-        self.level_map.load_map()
-        self.enemies = {}
-        self.items = []
-        self.map_objects = []
-        self.room_index = 0
-
-    def add_enem(self, enemy):
-        self.enemies.update({enemy: enemy.is_dead})
-
-    def draw(self, display, scroll):
-        for enemy in self.enemies:
-            enemy.draw(display, scroll)
-
-    def set_room_index(self, room_index):
-        self.room_index = room_index
-
-    def update(self, anim_count, player_rect):
-        for enemy in self.enemies:
-            enemy.update(anim_count, self.level_map, player_rect)
-            self.enemies[enemy] = enemy.is_dead
-
-
-pygame.display.set_mode()
-floor_tile = pygame.image.load("floor.png").convert_alpha()
-black_tile = pygame.image.load("black_tile.png").convert_alpha()
-TILE_SIZE = 16
-
 
 class Level:
     # pass map_file as a string that is the file path of the map
@@ -49,7 +18,7 @@ class Level:
         for line in self.map_text:
             self.map_tiles.append(list(line))
 
-    def draw_map(self, display_surface, scroll):
+    def draw_map(self, display_surface: pygame.Surface, scroll: list):
         self.map_rects = []
         y = 0
         for line in self.map_tiles:
@@ -64,13 +33,13 @@ class Level:
                 x += 1
             y += 1
 
-    def test_map_collision(self, rect):
+    def test_map_collision(self, rect: pygame.Rect):
         self.map_colliders = []
         for tile in self.map_rects:
             if pygame.Rect.colliderect(rect, tile):
                 self.map_colliders.append(tile)
 
-    def map_collision(self, rect, movement):
+    def map_collision(self, rect: pygame.Rect, movement: list):
         collision_types = {'top': False, 'bottom': False, 'left': False, 'right': False}
         rect.x += movement[0]
         self.test_map_collision(rect)
@@ -91,3 +60,35 @@ class Level:
                 rect.top = tile.bottom
                 collision_types['top'] = True
         return rect, collision_types
+
+
+class LevelManager:
+    def __init__(self, level_map: Level):
+        # level_map is a Level object
+        self.level_map = level_map
+        self.level_map.load_map()
+        self.enemies = {}
+        self.room_index = 0
+
+    def add_enem(self, enemy: pygame.sprite):
+        self.enemies.update({enemy: enemy.is_dead})
+
+    def draw(self, display: pygame.Surface, scroll: list):
+        for enemy in self.enemies:
+            enemy.draw(display, scroll)
+
+    def set_room_index(self, room_index: int):
+        self.room_index = room_index
+
+    def update(self, anim_count: int, player_rect: pygame.Rect):
+        for enemy in self.enemies:
+            enemy.update(anim_count, self.level_map, player_rect)
+            self.enemies[enemy] = enemy.is_dead
+
+
+pygame.display.set_mode()
+floor_tile = pygame.image.load("floor.png").convert_alpha()
+black_tile = pygame.image.load("black_tile.png").convert_alpha()
+TILE_SIZE = 16
+
+

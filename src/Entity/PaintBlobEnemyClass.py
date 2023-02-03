@@ -1,6 +1,5 @@
-import pygame, sys
+import pygame
 from PIL import Image, ImageSequence
-from LevelManagerClass import Level, LevelManager
 
 
 def load_image_from_gif(file_path, gif_name, images):
@@ -183,47 +182,61 @@ class AbstractPaintBlobEnemy(pygame.sprite.Sprite):
 
     def set_colour(self):
         if self.COLOUR_INDEX == 0:
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_move/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_move/',
                                 'paintblob_enemy_orange', self.move_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_move_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_move_right/',
                                 'orange_move_right', self.move_right_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_turn/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_turn/',
                                 'orange_turn', self.turn_left_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_turn_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_turn_right/',
                                 'orange_turn_right', self.turn_right_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_death_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_death_left/',
                                 'orange_death', self.death_left_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_death_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_orange/orange_death_right/',
                 'orange_death', self.death_right_anim)
         elif self.COLOUR_INDEX == 1:
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_move_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_move_left/',
                                 'paintblob_enemy_red', self.move_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_move_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_move_right/',
                                 'paintblob_enemy_red', self.move_right_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_turn/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_turn/',
                                 'red_turn', self.turn_left_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_turn_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_turn_right/',
                                 'red_turn_right', self.turn_right_anim)
             load_image_from_gif(
-                'enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_death_left/',
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_death_left/',
                 'red_death', self.death_left_anim)
             load_image_from_gif(
-                'enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_death_right/',
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_red/red_death_right/',
                 'red_death', self.death_right_anim)
         elif self.COLOUR_INDEX == 2:
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_move_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_move_left/',
                                 'paintblob_enemy_yellow', self.move_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_move_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_move_right/',
                                 'paintblob_enemy_yellow', self.move_right_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_turn_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_turn_left/',
                                 'yellow_turn', self.turn_left_anim)
-            load_image_from_gif('enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_turn_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_turn_right/',
                                 'yellow_turn_right', self.turn_right_anim)
             load_image_from_gif(
-                'enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_death_left/',
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_death_left/',
                 'yellow_death', self.death_left_anim)
             load_image_from_gif(
-                'enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_death_right/',
+                '../../resources/textures/enemy_anim/paintblob_enem/paintblob_enem_move/paintblob_enem_yellow/yellow_death_right/',
                 'yellow_death', self.death_right_anim)
 
 

@@ -1,15 +1,14 @@
 import pygame
 import sys
-import math
 
-from PaintBlobEnemyClass import OrangePBEnem, RedPBEnem, YellowPBEnem
-from PygmyPaintEnemyClass import OrangePygmyEnem, RedPygmyEnem, YellowPygmyEnem
-from GameUIClass import GameUI
-from LevelManagerClass import Level, LevelManager
-from PlayerClass import Player
-from FontClass import Font
+from Entity.PaintBlobEnemyClass import OrangePBEnem, RedPBEnem, YellowPBEnem
+from Entity.PygmyPaintEnemyClass import YellowPygmyEnem
+from GUI.GameUIClass import GameUI
+from Level.LevelManagerClass import Level, LevelManager
+from Entity.PlayerClass import Player
+from GUI.FontClass import Font
 from SaveAndLoadManager import SaveAndLoadSystem
-from AreaManagerClass import AreaManager
+from Level.AreaManagerClass import AreaManager
 
 # from UserInterface import UserInterface
 menu_clock = pygame.time.Clock()
@@ -38,7 +37,7 @@ data = {'player_x': 0, 'player_y': 0, 'game_complete': is_game_complete}
 
 # levels
 level_one = Level('room1.txt')
-font = Font('font_system/small_font.png')
+font = Font('../resources/textures/font_system/small_font.png')
 level_one_manager = LevelManager(level_one)
 level_one_manager.add_enem(OrangePBEnem([0, 0]))
 level_one_manager.add_enem(RedPBEnem([300, 0]))
@@ -53,9 +52,9 @@ cur_level = tutorial.cur_room
 
 player.becomes_colourful()
 
-background = pygame.image.load('background.png').convert_alpha()
-background_parallax = pygame.image.load('background_parallax.png').convert_alpha()
-foreground_parallax = pygame.image.load('foreground_parallax.png').convert_alpha()
+background = pygame.image.load('../background.png').convert_alpha()
+background_parallax = pygame.image.load('../background_parallax.png').convert_alpha()
+foreground_parallax = pygame.image.load('../foreground_parallax.png').convert_alpha()
 
 
 # run game
@@ -77,7 +76,7 @@ def run_game(save_file):
         cur_level.update(anim_count, player.rect)
         cur_level.draw(display, scroll)
 
-        player.rect, collisions = level_one.map_collision(player.rect, player.player_movement)
+        player.rect, collisions = cur_level.level_map.map_collision(player.rect, player.player_movement)
 
         if collisions['top']:
             player.player_y_momentum = 1
@@ -224,9 +223,9 @@ def run_game(save_file):
 
 def main_menu():
     click = False
-    play_button = pygame.image.load('main_menu_buttons/play_button.png').convert_alpha()
+    play_button = pygame.image.load('../resources/textures/main_menu_buttons/play_button.png').convert_alpha()
     play_button_rect = pygame.Rect(100, 60, play_button.get_width(), play_button.get_height())
-    quit_button = pygame.image.load('main_menu_buttons/quit_button.png').convert_alpha()
+    quit_button = pygame.image.load('../resources/textures/main_menu_buttons/quit_button.png').convert_alpha()
     quit_button_rect = pygame.Rect(100, 120, quit_button.get_width(), quit_button.get_height())
     while True:
         main_display.fill('black')
@@ -274,20 +273,22 @@ def main_menu():
 
 def save_files_menu():
     click = False
-    save_files_bg = pygame.image.load('save_files_buttons/save_files.png').convert_alpha()
-    empty_file = pygame.image.load('save_files_buttons/empty_save_file.png').convert_alpha()
-    delete_button = pygame.image.load('save_files_buttons/delete_file_button.png').convert_alpha()
+    save_files_bg = pygame.image.load('../resources/textures/save_files_buttons/save_files.png').convert_alpha()
+    empty_file = pygame.image.load('../resources/textures/save_files_buttons/empty_save_file.png').convert_alpha()
+    delete_button = pygame.image.load('../resources/textures/save_files_buttons/delete_file_button.png').convert_alpha()
     delete_rect_1 = pygame.Rect(250, 58, delete_button.get_width(),delete_button.get_height())
     delete_rect_2 = pygame.Rect(250, 108, delete_button.get_width(), delete_button.get_height())
     delete_rect_3 = pygame.Rect(250, 158, delete_button.get_width(), delete_button.get_height())
-    delete_highlight = pygame.image.load('save_files_buttons/delete_highlight.png').convert_alpha()
-    save_file_1 = pygame.image.load('save_files_buttons/save_file_1_button.png').convert_alpha()
+    delete_highlight = pygame.image.load(
+        '../resources/textures/save_files_buttons/delete_highlight.png').convert_alpha()
+    save_file_1 = pygame.image.load('../resources/textures/save_files_buttons/save_file_1_button.png').convert_alpha()
     file_1_rect = pygame.Rect(50, 50, save_file_1.get_width(), save_file_1.get_height())
-    save_file_2 = pygame.image.load('save_files_buttons/save_file_2_button.png').convert_alpha()
+    save_file_2 = pygame.image.load('../resources/textures/save_files_buttons/save_file_2_button.png').convert_alpha()
     file_2_rect = pygame.Rect(50, 100, save_file_2.get_width(), save_file_2.get_height())
-    save_file_3 = pygame.image.load('save_files_buttons/save_file_3_button.png').convert_alpha()
+    save_file_3 = pygame.image.load('../resources/textures/save_files_buttons/save_file_3_button.png').convert_alpha()
     file_3_rect = pygame.Rect(50, 150, save_file_3.get_width(), save_file_3.get_height())
-    hover_highlight = pygame.image.load('save_files_buttons/save_file_highlight.png').convert_alpha()
+    hover_highlight = pygame.image.load(
+        '../resources/textures/save_files_buttons/save_file_highlight.png').convert_alpha()
     if not save_load_sys.check_for_file('file_1'):
         save_file_1 = empty_file
     if not save_load_sys.check_for_file('file_2'):
@@ -408,15 +409,16 @@ def save_files_menu():
 
 def options_menu(save_file):
     click = False
-    options_bg = pygame.image.load('options_buttons/options_bg.png').convert_alpha()
-    pause_bg = pygame.image.load('options_buttons/pause_bg.png').convert_alpha()
-    resume_button = pygame.image.load('options_buttons/resume_button.png').convert_alpha()
+    options_bg = pygame.image.load('../resources/textures/options_buttons/options_bg.png').convert_alpha()
+    pause_bg = pygame.image.load('../resources/textures/options_buttons/pause_bg.png').convert_alpha()
+    resume_button = pygame.image.load('../resources/textures/options_buttons/resume_button.png').convert_alpha()
     resume_button_rect = pygame.Rect(100, 60, resume_button.get_width(), resume_button.get_height())
-    settings_button = pygame.image.load('options_buttons/settings_button.png').convert_alpha()
+    settings_button = pygame.image.load('../resources/textures/options_buttons/settings_button.png').convert_alpha()
     settings_button_rect = pygame.Rect(100, 80, settings_button.get_width(), settings_button.get_height())
-    exit_to_menu_button = pygame.image.load('options_buttons/exit_to_menu_button.png').convert_alpha()
+    exit_to_menu_button = pygame.image.load(
+        '../resources/textures/options_buttons/exit_to_menu_button.png').convert_alpha()
     exit_to_menu_button_rect = pygame.Rect(100, 100, exit_to_menu_button.get_width(), exit_to_menu_button.get_height())
-    quit_button = pygame.image.load('options_buttons/quit_button.png').convert_alpha()
+    quit_button = pygame.image.load('../resources/textures/options_buttons/quit_button.png').convert_alpha()
     quit_button_rect = pygame.Rect(100, 120, quit_button.get_width(), quit_button.get_height())
     while True:
         options_display.blit(display, [0, 0])
@@ -504,10 +506,10 @@ def settings():
 
 def confirm_quit(cur_display, save_file):
     click = False
-    confirm_quit_screen = pygame.image.load('confirm_quit/confirm_quit_bg.png')
-    yes_button = pygame.image.load('confirm_quit/confirm_quit_yes.png')
+    confirm_quit_screen = pygame.image.load('../resources/textures/confirm_quit/confirm_quit_bg.png')
+    yes_button = pygame.image.load('../resources/textures/confirm_quit/confirm_quit_yes.png')
     yes_button_rect = pygame.Rect(100, 10, yes_button.get_width(), yes_button.get_height())
-    no_button = pygame.image.load('confirm_quit/confirm_quit_no.png')
+    no_button = pygame.image.load('../resources/textures/confirm_quit/confirm_quit_no.png')
     no_button_rect = pygame.Rect(100, 20, no_button.get_width(), no_button.get_height())
     while True:
         cur_display.blit(confirm_quit_screen, [0, 0])

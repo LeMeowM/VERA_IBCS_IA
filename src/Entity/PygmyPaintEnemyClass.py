@@ -193,7 +193,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
                 self.anger_timer = 0
 
     def attack(self):
-        if self.attack_count >= 40:
+        if self.attack_count >= 400:
             num = random.randint(1,2)
             if num == 1:
                 self.is_attack = True
@@ -297,79 +297,101 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
 
     def set_colour(self):
         if self.COLOUR_INDEX == 0:
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/move_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/move_left/',
                                 'move', self.move_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/move_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/move_right/',
                                 'move', self.move_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/turn/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/turn/',
                                 'turn', self.turn_left_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/turn_right/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/turn_right/',
                                 'turn_right', self.turn_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/attack/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/attack/',
                                 'attack', self.attack_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/attack_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/attack_right/',
                                 'attack_right', self.attack_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/state_change_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/state_change_left/',
                                 'state_change', self.state_change_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/state_change_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/state_change_right/',
                                 'state_change_right', self.state_change_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_left/',
                                 'idle', self.idle_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_right/',
                                 'idle', self.idle_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_turn/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_turn/',
                                 'idle_turn', self.idle_turn_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_turn_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_turn_right/',
                                 'idle_turn_right', self.idle_turn_right_anim)
         elif self.COLOUR_INDEX == 1:
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/move_left/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/move_left/',
                                 'move', self.move_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/move_right/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/move_right/',
                                 'move', self.move_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/turn/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/turn/',
                                 'turn', self.turn_left_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/turn_right/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/turn_right/',
                                 'turn_right', self.turn_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/attack/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/attack/',
                                 'attack', self.attack_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/attack_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/attack_right/',
                                 'attack_right', self.attack_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/state_change_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/state_change_left/',
                                 'state_change', self.state_change_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/state_change_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/state_change_right/',
                                 'state_change_right', self.state_change_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_left/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_left/',
                                 'idle', self.idle_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_right/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_right/',
                                 'idle', self.idle_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_turn/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_turn/',
                                 'idle_turn', self.idle_turn_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_turn_right/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_turn_right/',
                                 'idle_turn_right', self.idle_turn_right_anim)
         elif self.COLOUR_INDEX == 2:
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/move_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/move_left/',
                                 'move', self.move_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/move_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/move_right/',
                                 'move', self.move_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/turn/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/turn/',
                                 'turn', self.turn_left_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn_right/',
                                 'idle_turn_right', self.turn_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/attack/',
+            load_image_from_gif('../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/attack/',
                                 'attack', self.attack_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/attack_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/attack_right/',
                                 'attack_right', self.attack_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/state_change_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/state_change_left/',
                                 'state_change', self.state_change_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/state_change_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/state_change_right/',
                                 'state_change_right', self.state_change_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_left/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_left/',
                                 'idle', self.idle_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_right/',
                                 'idle', self.idle_right_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn/',
                                 'idle_turn', self.idle_turn_anim)
-            load_image_from_gif('enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn_right/',
+            load_image_from_gif(
+                '../../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn_right/',
                                 'idle_turn_right', self.idle_turn_right_anim)
 
 
