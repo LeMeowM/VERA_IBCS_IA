@@ -2,13 +2,14 @@ import json
 import os
 
 
-class SaveAndLoadSystem():
+class SaveAndLoadSystem:
     def __init__(self, save_folder):
         self.save_folder = save_folder
-        self.file_data = {'file_1': False, 'file_2': False, 'file_3': False}
+        self.file_data = {'file_1': False, 'file_2': False,
+                          'file_3': False}
 
     def save_file(self, data, file):
-        save_file = open(self.save_folder + '/' + file + '.json', "wb")
+        #save_file = open(self.save_folder + '/' + file + '.json', "wb")
         json_object = json.dumps(data)
         with open(self.save_folder + '/' + file + '.json', "w") as outfile:
             outfile.write(json_object)

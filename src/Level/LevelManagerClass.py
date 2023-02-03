@@ -1,3 +1,5 @@
+import os
+
 import pygame
 
 
@@ -86,9 +88,8 @@ class LevelManager:
             self.enemies[enemy] = enemy.is_dead
 
 
+
 pygame.display.set_mode()
-floor_tile = pygame.image.load("floor.png").convert_alpha()
-black_tile = pygame.image.load("black_tile.png").convert_alpha()
+floor_tile = pygame.image.load(os.path.join("../resources/textures/MapItems", "floor.png")).convert_alpha()
+black_tile = pygame.image.load(os.path.join("../resources/textures/MapItems", "black_tile.png")).convert_alpha()
 TILE_SIZE = 16
-
-
