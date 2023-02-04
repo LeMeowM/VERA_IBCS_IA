@@ -21,7 +21,7 @@ class Player(pygame.sprite.Sprite):
 
         # colour state
         self.is_changing_colour: bool = False
-        default_state: pygame.image = pygame.image.load('../player_default.png').convert_alpha()
+        default_state: pygame.image = pygame.image.load('player_default.png').convert_alpha()
         self.player_colours: dict = {'blue': True, 'green': False, 'purple': False}
         self.colour_index: int = 3
         self.damage: int = 0
@@ -29,32 +29,32 @@ class Player(pygame.sprite.Sprite):
 
         self.default_anim_frames: list = []
         self.default_idle_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_default_anim/player_default_idle_left/', 'player_default_idle_left',
+        load_image_from_gif('resources/textures/player_anim/player_default_anim/player_default_idle_left/', 'player_default_idle_left',
                             self.default_idle_left_frames)
         self.default_idle_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_default_anim/player_default_idle_right/', 'player_default_idle_right',
+        load_image_from_gif('resources/textures/player_anim/player_default_anim/player_default_idle_right/', 'player_default_idle_right',
                             self.default_idle_right_frames)
         self.default_moving_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_default_anim/player_default_moving_right/',
+        load_image_from_gif('resources/textures/player_anim/player_default_anim/player_default_moving_right/',
                             'player_default_moving_right',
                             self.default_moving_right_frames)
         self.default_moving_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_default_anim/player_default_moving_left/', 'player_default_moving_left',
+        load_image_from_gif('resources/textures/player_anim/player_default_anim/player_default_moving_left/', 'player_default_moving_left',
                             self.default_moving_left_frames)
         self.default_jumping_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_default_anim/player_default_jumping_left/',
+        load_image_from_gif('resources/textures/player_anim/player_default_anim/player_default_jumping_left/',
                             'player_default_jumping_left',
                             self.default_jumping_left_frames)
         self.default_falling_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_default_anim/player_default_falling_left/',
+        load_image_from_gif('resources/textures/player_anim/player_default_anim/player_default_falling_left/',
                             'player_default_falling_left',
                             self.default_falling_left_frames)
         self.default_jumping_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_default_anim/player_default_jumping_right/',
+        load_image_from_gif('resources/textures/player_anim/player_default_anim/player_default_jumping_right/',
                             'player_default_jumping_right',
                             self.default_jumping_right_frames)
         self.default_falling_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_default_anim/player_default_falling_right/',
+        load_image_from_gif('resources/textures/player_anim/player_default_anim/player_default_falling_right/',
                             'player_default_falling_right', self.default_falling_right_frames)
         self.default_attack_left_frames: list = []
         # load_image_from_gif('player_anim/player_default_anim/player_default_attack_vfx/', 'attack_vfx_anim', self.default_attack_left_frames)
@@ -62,85 +62,85 @@ class Player(pygame.sprite.Sprite):
 
         self.blue_anim_frames: list = []
         self.blue_idle_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_blue_anim/player_blue_idle_left/', 'player_blue_idle_left',
+        load_image_from_gif('resources/textures/player_anim/player_blue_anim/player_blue_idle_left/', 'player_blue_idle_left',
                             self.blue_idle_left_frames)
         self.blue_idle_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_blue_anim/player_blue_idle_right/', 'player_blue_idle_right',
+        load_image_from_gif('resources/textures/player_anim/player_blue_anim/player_blue_idle_right/', 'player_blue_idle_right',
                             self.blue_idle_right_frames)
         self.blue_moving_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_blue_anim/player_blue_moving_right/', 'player_blue_moving_right',
+        load_image_from_gif('resources/textures/player_anim/player_blue_anim/player_blue_moving_right/', 'player_blue_moving_right',
                             self.blue_moving_right_frames)
         self.blue_moving_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_blue_anim/player_blue_moving_left/', 'player_blue_moving_left',
+        load_image_from_gif('resources/textures/player_anim/player_blue_anim/player_blue_moving_left/', 'player_blue_moving_left',
                             self.blue_moving_left_frames)
         self.blue_jumping_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_blue_anim/player_blue_jumping_left/', 'player_blue_jumping_left',
+        load_image_from_gif('resources/textures/player_anim/player_blue_anim/player_blue_jumping_left/', 'player_blue_jumping_left',
                             self.blue_jumping_left_frames)
         self.blue_falling_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_blue_anim/player_blue_falling_left/',
+        load_image_from_gif('resources/textures/player_anim/player_blue_anim/player_blue_falling_left/',
                             'player_blue_falling_left', self.blue_falling_left_frames)
         self.blue_jumping_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_blue_anim/player_blue_jumping_right/', 'player_blue_jumping_right',
+        load_image_from_gif('resources/textures/player_anim/player_blue_anim/player_blue_jumping_right/', 'player_blue_jumping_right',
                             self.blue_jumping_right_frames)
         self.blue_falling_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_blue_anim/player_blue_falling_right/',
+        load_image_from_gif('resources/textures/player_anim/player_blue_anim/player_blue_falling_right/',
                             'player_blue_falling_right', self.blue_falling_right_frames)
         self.blue_attacking_frames: list = []
         self.blue_damaged_frames: list = []
 
         self.green_anim_frames: list = []
         self.green_idle_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_green_anim/player_green_idle_left/', 'player_green_idle_left',
+        load_image_from_gif('resources/textures/player_anim/player_green_anim/player_green_idle_left/', 'player_green_idle_left',
                             self.green_idle_left_frames)
         self.green_idle_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_green_anim/player_green_idle_right/', 'player_green_idle_right',
+        load_image_from_gif('resources/textures/player_anim/player_green_anim/player_green_idle_right/', 'player_green_idle_right',
                             self.green_idle_right_frames)
         self.green_moving_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_green_anim/player_green_moving_right/', 'player_green_moving_right',
+        load_image_from_gif('resources/textures/player_anim/player_green_anim/player_green_moving_right/', 'player_green_moving_right',
                             self.green_moving_right_frames)
         self.green_moving_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_green_anim/player_green_moving_left/', 'player_green_moving_left',
+        load_image_from_gif('resources/textures/player_anim/player_green_anim/player_green_moving_left/', 'player_green_moving_left',
                             self.green_moving_left_frames)
         self.green_jumping_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_green_anim/player_green_jumping_left/', 'player_green_jumping_left',
+        load_image_from_gif('resources/textures/player_anim/player_green_anim/player_green_jumping_left/', 'player_green_jumping_left',
                             self.green_jumping_left_frames)
         self.green_falling_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_green_anim/player_green_falling_left/',
+        load_image_from_gif('resources/textures/player_anim/player_green_anim/player_green_falling_left/',
                             'player_green_falling_left', self.green_falling_left_frames)
         self.green_jumping_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_green_anim/player_green_jumping_right/', 'player_green_jumping_right',
+        load_image_from_gif('resources/textures/player_anim/player_green_anim/player_green_jumping_right/', 'player_green_jumping_right',
                             self.green_jumping_right_frames)
         self.green_falling_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_green_anim/player_green_falling_right/',
+        load_image_from_gif('resources/textures/player_anim/player_green_anim/player_green_falling_right/',
                             'player_green_falling_right', self.green_falling_right_frames)
         self.green_attacking_frames: list = []
         self.green_damaged_frames: list = []
 
         self.purple_anim_frames: list = []
         self.purple_idle_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_purple_anim/player_purple_idle_left/', 'player_purple_idle_left',
+        load_image_from_gif('resources/textures/player_anim/player_purple_anim/player_purple_idle_left/', 'player_purple_idle_left',
                             self.purple_idle_left_frames)
         self.purple_idle_right_frames = []
-        load_image_from_gif('../resources/textures/player_anim/player_purple_anim/player_purple_idle_right/', 'player_purple_idle_right',
+        load_image_from_gif('resources/textures/player_anim/player_purple_anim/player_purple_idle_right/', 'player_purple_idle_right',
                             self.purple_idle_right_frames)
         self.purple_moving_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_purple_anim/player_purple_moving_right/', 'player_purple_moving_right',
+        load_image_from_gif('resources/textures/player_anim/player_purple_anim/player_purple_moving_right/', 'player_purple_moving_right',
                             self.purple_moving_right_frames)
         self.purple_moving_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_purple_anim/player_purple_moving_left/', 'player_purple_moving_left',
+        load_image_from_gif('resources/textures/player_anim/player_purple_anim/player_purple_moving_left/', 'player_purple_moving_left',
                             self.purple_moving_left_frames)
         self.purple_jumping_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_purple_anim/player_purple_jumping_left/', 'player_purple_jumping_left',
+        load_image_from_gif('resources/textures/player_anim/player_purple_anim/player_purple_jumping_left/', 'player_purple_jumping_left',
                             self.purple_jumping_left_frames)
         self.purple_falling_left_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_purple_anim/player_purple_falling_left/',
+        load_image_from_gif('resources/textures/player_anim/player_purple_anim/player_purple_falling_left/',
                             'player_purple_falling_left', self.purple_falling_left_frames)
         self.purple_jumping_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_purple_anim/player_purple_jumping_right/',
+        load_image_from_gif('resources/textures/player_anim/player_purple_anim/player_purple_jumping_right/',
                             'player_purple_jumping_right',
                             self.purple_jumping_right_frames)
         self.purple_falling_right_frames: list = []
-        load_image_from_gif('../resources/textures/player_anim/player_purple_anim/player_purple_falling_right/',
+        load_image_from_gif('resources/textures/player_anim/player_purple_anim/player_purple_falling_right/',
                             'player_purple_falling_right', self.purple_falling_right_frames)
         self.purple_attacking_frames: list = []
         self.purple_damaged_frames: list = []
@@ -171,14 +171,14 @@ class Player(pygame.sprite.Sprite):
         self.attack_cooldown: int = 30
 
         self.attack_vfx_full = pygame.image.load(
-            '../resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_left/attack_vfx_left_anim_1.png').convert_alpha()
+            'resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_left/attack_vfx_left_anim_1.png').convert_alpha()
         self.attack_left: list = []
         load_image_from_gif(
-            '../resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_left/',
+            'resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_left/',
                             'attack_vfx_left_anim', self.attack_left)
         self.attack_right: list = []
         load_image_from_gif(
-            '../resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_right/',
+            'resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_vfx_anim_right/',
                             'attack_vfx_right_anim', self.attack_right)
         self.attack_index: int = 2
 
@@ -188,11 +188,11 @@ class Player(pygame.sprite.Sprite):
         self.attack_hit: bool = False
         self.attack_hit_left_frames: list = []
         load_image_from_gif(
-            '../resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_hit_anim_left/',
+            'resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_hit_anim_left/',
                             'attack_hit_left_anim', self.attack_hit_left_frames)
         self.attack_hit_right_frames: list = []
         load_image_from_gif(
-            '../resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_hit_anim_right/',
+            'resources/textures/player_anim/player_default_anim/player_default_attack_vfx/attack_hit_anim_right/',
                             'attack_hit_right_anim', self.attack_hit_right_frames)
         self.attack_hit_index: int = 0
         self.cur_attack_hit_anim: list = self.attack_hit_right_frames
@@ -235,15 +235,12 @@ class Player(pygame.sprite.Sprite):
 
     def animations(self) -> None:
         initial_anim = self.cur_anim
-        if self.is_colourful:
-            if self.player_colours['blue']:
-                self.blue_anim()
-            elif self.player_colours['green']:
-                self.green_anim()
-            else:
-                self.purple_anim()
+        if self.player_colours['blue']:
+            self.blue_anim()
+        elif self.player_colours['green']:
+            self.green_anim()
         else:
-            self.default_anim()
+            self.purple_anim()
         if initial_anim != self.cur_anim:
             self.anim_index = 0
         if self.attack_hit:

@@ -1,8 +1,10 @@
 import pygame, sys, random
 from PIL import Image, ImageSequence
 
+from src.Level.LevelManagerClass import Level
 
-def load_image_from_gif(file_path, gif_name, images):
+
+def load_image_from_gif(file_path: str, gif_name: str, images: list) -> None:
     image_gif = Image.open(file_path + gif_name + '.gif')
     frame_num = 0
     for frame in ImageSequence.Iterator(image_gif):
@@ -13,68 +15,68 @@ def load_image_from_gif(file_path, gif_name, images):
 
 
 class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
-    def __init__(self, colour_index, loc):
+    def __init__(self, colour_index: int, loc: list):
         super().__init__()
-        self.colour_states = {0: 'orange', 1: 'red', 2: 'yellow'}
-        self.COLOUR_INDEX = colour_index
-        self.colour = self.colour_states[self.COLOUR_INDEX]
-        self.health = 6
+        self.colour_states: dict = {0: 'orange', 1: 'red', 2: 'yellow'}
+        self.COLOUR_INDEX: int = colour_index
+        self.colour: str = self.colour_states[self.COLOUR_INDEX]
+        self.health: int = 6
 
-        self.facing_left = False
-        self.facing_right = True
-        self.is_angry = False
-        self.is_attack = False
-        self.is_turning = False
-        self.is_dead = False
-        self.is_idle = True
-        self.is_avoid = False
-        self.moving_right = False
-        self.moving_left = False
+        self.facing_left: bool = False
+        self.facing_right: bool = True
+        self.is_angry: bool = False
+        self.is_attack: bool = False
+        self.is_turning: bool = False
+        self.is_dead: bool = False
+        self.is_idle: bool = True
+        self.is_avoid: bool = False
+        self.moving_right: bool = False
+        self.moving_left: bool = False
 
-        self.movement = loc
-        self.y_momentum = 0
-        self.x_momentum = 0
+        self.movement: list = loc
+        self.y_momentum: int = 0
+        self.x_momentum: int = 0
 
-        self.anim_index = 0
-        self.anger_timer = 0
-        self.turn_count = 0
-        self.x_count = 0
-        self.y_count = 0
-        self.attack_count = 0
-        self.x_movement = ''
-        self.y_movement = ''
+        self.anim_index: int = 0
+        self.anger_timer: int = 0
+        self.turn_count: int = 0
+        self.x_count: int = 0
+        self.y_count: int = 0
+        self.attack_count: int = 0
+        self.x_movement: str = ''
+        self.y_movement: str = ''
 
         # idle anim refers to when the enemy is not angry
-        self.idle_anim = []
-        self.idle_right_anim = []
+        self.idle_anim: list = []
+        self.idle_right_anim: list = []
         # turn means turning from left to right
-        self.idle_turn_anim = []
+        self.idle_turn_anim: list = []
         # turn right means turning from right to left
-        self.idle_turn_right_anim = []
-        self.state_change_anim = []
-        self.state_change_right_anim = []
-        self.move_anim = []
-        self.move_right_anim = []
-        self.attack_anim = []
-        self.attack_right_anim = []
-        self.turn_left_anim = []
-        self.turn_right_anim = []
-        self.death_left_anim = []
-        self.death_right_anim = []
+        self.idle_turn_right_anim: list = []
+        self.state_change_anim: list = []
+        self.state_change_right_anim: list = []
+        self.move_anim: list = []
+        self.move_right_anim: list = []
+        self.attack_anim: list = []
+        self.attack_right_anim: list = []
+        self.turn_left_anim: list = []
+        self.turn_right_anim: list = []
+        self.death_left_anim: list = []
+        self.death_right_anim: list = []
 
         self.set_colour()
-        self.cur_anim = self.idle_anim
-        self.image = self.cur_anim[self.anim_index]
-        self.rect = pygame.Rect(0,50,self.image.get_width(),self.image.get_height())
-        self.detect_rect = pygame.Rect(0,50,self.image.get_width()+100,self.image.get_height()+50)
+        self.cur_anim: list = self.idle_anim
+        self.image: pygame.image = self.cur_anim[self.anim_index]
+        self.rect: pygame.Rect = pygame.Rect(0,50,self.image.get_width(),self.image.get_height())
+        self.detect_rect: pygame.Rect = pygame.Rect(0,50,self.image.get_width()+100,self.image.get_height()+50)
         self.detect_rect.center = self.rect.center
 
-    def draw(self, display, scroll):
+    def draw(self, display: pygame.Surface, scroll: list) -> None:
         self.image = self.cur_anim[self.anim_index]
         self.detect_rect.center = self.rect.center
         display.blit(self.image, (self.rect.x - 2 - scroll[0], self.rect.y - 2 - scroll[1]))
 
-    def rand_turn(self):
+    def rand_turn(self) -> None:
         if self.turn_count >= 300:
             num = random.randint(1,2)
             if num == 1:
@@ -83,7 +85,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
         else:
             self.turn_count += 1
 
-    def turn(self, player_rect):
+    def turn(self, player_rect: pygame.Rect) -> None:
         if player_rect.centerx < ((self.detect_rect.centerx - self.detect_rect.left)/2 + self.detect_rect.left) and self.facing_right:
             self.is_turning = True
             self.is_avoid = False
@@ -94,13 +96,13 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
             self.is_avoid = True
             self.x_momentum = 2
 
-    def avoid(self, player_rect):
+    def avoid(self, player_rect: pygame.Rect) -> None:
         if player_rect.centery < ((self.detect_rect.centery - self.detect_rect.top)/2 + self.detect_rect.top):
             self.is_avoid = True
         elif player_rect.centery > ((self.detect_rect.bottom - self.detect_rect.centery)/2 + self.detect_rect.bottom):
             self.is_avoid = True
 
-    def animations(self):
+    def animations(self) -> None:
         if self.is_angry:
             if self.is_turning:
                 if self.facing_right:
@@ -140,7 +142,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
             else:
                 self.cur_anim = self.idle_right_anim
 
-    def change_frame(self, anim_count):
+    def change_frame(self, anim_count: int) -> None:
         if anim_count >= 5:
             if self.is_turning and self.anim_index >= 6:
                 if self.is_idle:
@@ -177,7 +179,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
             if self.is_dead:
                 self.anim_index = 1
 
-    def aggravate(self, player_rect):
+    def aggravate(self, player_rect: pygame.Rect) -> None:
         if pygame.Rect.colliderect(self.detect_rect, player_rect):
             self.is_angry = True
             self.is_idle = False
@@ -192,7 +194,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
             else:
                 self.anger_timer = 0
 
-    def attack(self):
+    def attack(self) -> None:
         if self.attack_count >= 400:
             num = random.randint(1,2)
             if num == 1:
@@ -203,7 +205,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
         else:
             self.attack_count += 1
 
-    def rand_y_movement(self):
+    def rand_y_movement(self) -> (int, str):
         num = random.randint(1,3)
         if num == 1:
             return 2, 'top'
@@ -212,7 +214,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
         else:
             return 0, ''
 
-    def rand_x_movement(self):
+    def rand_x_movement(self) -> (int, str):
         num = random.randint(1,3)
         if num == 1:
             return 4, 'left'
@@ -221,7 +223,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
         else:
             return 0, ''
 
-    def enem_movement(self, map):
+    def enem_movement(self, map: Level) -> None:
         self.rect, enem_collisions = map.map_collision(self.rect, self.movement)
         self.movement = [0, 0]
         if self.is_idle:
@@ -278,7 +280,7 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
                 if self.x_momentum <= 0:
                     self.x_momentum = 2
 
-    def update(self, anim_count, map, player_rect):
+    def update(self, anim_count: int, map: Level, player_rect: pygame.Rect) -> None:
         if self.health > 0:
             self.is_dead = False
             self.enem_movement(map)
@@ -295,64 +297,64 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
         self.animations()
 
 
-    def set_colour(self):
+    def set_colour(self) -> None:
         if self.COLOUR_INDEX == 0:
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/move_left/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/move_left/',
                                 'move', self.move_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/move_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/move_right/',
                                 'move', self.move_right_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/turn/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/turn/',
                                 'turn', self.turn_left_anim)
             load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/turn_right/',
                                 'turn_right', self.turn_right_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/attack/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/attack/',
                                 'attack', self.attack_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/attack_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/attack_right/',
                                 'attack_right', self.attack_right_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/state_change_left/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/state_change_left/',
                                 'state_change', self.state_change_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/state_change_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_orange/state_change_right/',
                                 'state_change_right', self.state_change_right_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_left/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_left/',
                                 'idle', self.idle_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_right/',
                                 'idle', self.idle_right_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_turn/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_turn/',
                                 'idle_turn', self.idle_turn_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_turn_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_orange/idle_turn_right/',
                                 'idle_turn_right', self.idle_turn_right_anim)
         elif self.COLOUR_INDEX == 1:
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/move_left/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/move_left/',
                                 'move', self.move_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/move_right/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/move_right/',
                                 'move', self.move_right_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/turn/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/turn/',
                                 'turn', self.turn_left_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/turn_right/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/turn_right/',
                                 'turn_right', self.turn_right_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/attack/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/attack/',
                                 'attack', self.attack_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/attack_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/attack_right/',
                                 'attack_right', self.attack_right_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/state_change_left/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/state_change_left/',
                                 'state_change', self.state_change_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/state_change_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_red/state_change_right/',
                                 'state_change_right', self.state_change_right_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_left/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_left/',
                                 'idle', self.idle_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_right/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_right/',
                                 'idle', self.idle_right_anim)
             load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_red/idle_turn/',
                                 'idle_turn', self.idle_turn_anim)
@@ -360,51 +362,51 @@ class AbstractPygmyPaintEnemy(pygame.sprite.Sprite):
                                 'idle_turn_right', self.idle_turn_right_anim)
         elif self.COLOUR_INDEX == 2:
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/move_left/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/move_left/',
                                 'move', self.move_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/move_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/move_right/',
                                 'move', self.move_right_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/turn/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/turn/',
                                 'turn', self.turn_left_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn_right/',
                                 'idle_turn_right', self.turn_right_anim)
-            load_image_from_gif('../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/attack/',
+            load_image_from_gif('resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/attack/',
                                 'attack', self.attack_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/attack_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/attack_right/',
                                 'attack_right', self.attack_right_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/state_change_left/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/state_change_left/',
                                 'state_change', self.state_change_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/state_change_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_move/pygmy_enem_yellow/state_change_right/',
                                 'state_change_right', self.state_change_right_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_left/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_left/',
                                 'idle', self.idle_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_right/',
                                 'idle', self.idle_right_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn/',
                                 'idle_turn', self.idle_turn_anim)
             load_image_from_gif(
-                '../resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn_right/',
+                'resources/textures/enemy_anim/pygmy_enem/pygmy_idle/pygmy_enem_yellow/idle_turn_right/',
                                 'idle_turn_right', self.idle_turn_right_anim)
 
 
 class OrangePygmyEnem(AbstractPygmyPaintEnemy):
-    def __init__(self, loc):
+    def __init__(self, loc: list):
         super().__init__(0, loc)
 
 
 class RedPygmyEnem(AbstractPygmyPaintEnemy):
-    def __init__(self, loc):
+    def __init__(self, loc: list):
         super().__init__(1, loc)
 
 
 class YellowPygmyEnem(AbstractPygmyPaintEnemy):
-    def __init__(self, loc):
+    def __init__(self, loc: list):
         super().__init__(2, loc)
